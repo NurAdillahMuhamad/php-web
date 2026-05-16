@@ -11,28 +11,18 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
     exit;
 }
 
-$sql = "SELECT id, pH, cahaya, warna, status_warna, persentase_warna, waktu
-        FROM mikroalga_sensor
-        WHERE DATE(waktu) = '$tanggal'
-        ORDER BY id ASC";
+try {
+    $stmt = $pdo->prepare("SELECT id, pH, cahaya, warna, status_warna, persentase_warna, waktu
+                           FROM mikroalga_sensor WHERE DATE(waktu) = ? ORDER BY id ASC");
+    $stmt->execute([$tanggal]);
+    $data = $stmt->fetchAll();
 
-$result = mysqli_query($konek, $sql);
-
-if (!$result) {
-    echo json_encode(['error' => 'Query gagal: ' . mysqli_error($konek)]);
-    exit;
+    if (empty($data)) {
+        echo json_encode(['error' => 'Tidak ada data', 'data' => []]);
+    } else {
+        echo json_encode(['data' => $data]);
+    }
+} catch (PDOException $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
-
-$data = [];
-while ($row = mysqli_fetch_assoc($result)) {
-    $data[] = $row;
-}
-
-if (empty($data)) {
-    echo json_encode(['error' => 'Tidak ada data', 'data' => []]);
-} else {
-    echo json_encode(['data' => $data]);
-}
-
-mysqli_close($konek);
 ?>

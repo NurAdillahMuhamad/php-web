@@ -4,30 +4,23 @@ header('Access-Control-Allow-Origin: *');
 
 require_once __DIR__ . '/db.php';
 
-$warna        = isset($_GET['warna'])        ? mysqli_real_escape_string($konek, $_GET['warna'])        : 'tidak terdeteksi';
-$status_warna = isset($_GET['status_warna']) ? mysqli_real_escape_string($konek, $_GET['status_warna']) : '-';
-$persentase   = isset($_GET['persentase'])   ? (float)$_GET['persentase']                               : 0;
+$warna        = $_GET['warna']        ?? 'tidak terdeteksi';
+$status_warna = $_GET['status_warna'] ?? '-';
+$persentase   = (float)($_GET['persentase'] ?? 0);
 
-// Update baris terakhir di mikroalga_sensor
-$id_query = mysqli_query($konek, "SELECT MAX(id) as max_id FROM mikroalga_sensor");
-$id_row   = mysqli_fetch_assoc($id_query);
-$max_id   = $id_row['max_id'];
+try {
+    $max = $pdo->query("SELECT MAX(id) as max_id FROM mikroalga_sensor")->fetch();
+    $max_id = $max['max_id'];
 
-if ($max_id) {
-    $sql = "UPDATE mikroalga_sensor
-            SET warna='$warna', status_warna='$status_warna', persentase_warna='$persentase'
-            WHERE id='$max_id'";
-    $result = mysqli_query($konek, $sql);
-
-    if ($result) {
+    if ($max_id) {
+        $stmt = $pdo->prepare("UPDATE mikroalga_sensor SET warna=?, status_warna=?, persentase_warna=? WHERE id=?");
+        $stmt->execute([$warna, $status_warna, $persentase, $max_id]);
         echo json_encode(['status' => 'ok', 'id' => $max_id, 'warna' => $warna]);
     } else {
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'msg' => mysqli_error($konek)]);
+        echo json_encode(['status' => 'error', 'msg' => 'Tidak ada data sensor']);
     }
-} else {
-    echo json_encode(['status' => 'error', 'msg' => 'Tidak ada data sensor']);
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['status' => 'error', 'msg' => $e->getMessage()]);
 }
-
-mysqli_close($konek);
 ?>
