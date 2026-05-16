@@ -1,12 +1,8 @@
 <?php
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 
-$konek = mysqli_connect("sql111.infinityfree.com", "if0_41924899", "mikroalga123", "if0_41924899_mikroalga");
-
-if (!$konek) {
-    echo json_encode(['error' => 'Koneksi gagal']);
-    exit;
-}
+require_once __DIR__ . '/db.php';
 
 $tanggal = isset($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
 
@@ -15,14 +11,7 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
     exit;
 }
 
-$sql = "SELECT 
-            id,
-            pH,
-            cahaya,
-            warna,
-            status_warna,
-            persentase_warna,
-            waktu
+$sql = "SELECT id, pH, cahaya, warna, status_warna, persentase_warna, waktu
         FROM mikroalga_sensor
         WHERE DATE(waktu) = '$tanggal'
         ORDER BY id ASC";
