@@ -29,6 +29,7 @@
       --red: #d94141;
       --green: #1f9e5c;
       --sidebar-mini: 54px;
+      
       --sidebar-w: 200px;
     }
 
