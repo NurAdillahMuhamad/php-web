@@ -87,6 +87,7 @@ if ($warna_railway && isset($warna_railway['warna']) && $warna_railway['warna'] 
 // =============================================
 echo json_encode([
     "pH"               => round($ph, 2),
+    "cahaya"           => round($lux),
     "waktu"            => $d['waktu']        ?? null,
     "menit_lalu"       => $menit_lalu,
     "pH_status"        => $ph_status,
