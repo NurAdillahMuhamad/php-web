@@ -29,7 +29,6 @@
       --red: #d94141;
       --green: #1f9e5c;
       --sidebar-mini: 54px;
-      
       --sidebar-w: 200px;
     }
 
@@ -167,176 +166,116 @@
     .badge-warning { background:#fff3e0; color:#b85e1a; }
     .badge-normal  { background:#e6f5ee; color:#1a7a4c; }
 
-    /* Warna card - area box + tombol live */
     .warna-card-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      margin-top: 2px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 2px;
     }
-    .warna-box-wrap {
-      position: relative;
-      width: 90%;
-    }
-    .warna-box {
-      width: 100%;
-      height: 28px;
-      border-radius: 6px;
-      display: block;
-    }
+    .warna-box-wrap { position: relative; width: 90%; }
+    .warna-box { width: 100%; height: 28px; border-radius: 6px; display: block; }
     .btn-live {
-      position: absolute;
-      right: 4px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.55);
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      font-size: 0.58rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: background 0.15s;
+      position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+      background: rgba(0,0,0,0.55); color: #fff; border: none; border-radius: 5px;
+      font-size: 0.58rem; font-weight: 700; padding: 2px 7px; cursor: pointer;
+      display: flex; align-items: center; gap: 4px; transition: background 0.15s;
       font-family: 'Plus Jakarta Sans', sans-serif;
     }
     .btn-live:hover { background: rgba(220,20,20,0.85); }
-    .btn-live .live-dot {
-      width: 6px; height: 6px; background: #ff4444;
-      border-radius: 50%; animation: pulse 1.2s infinite;
-    }
-
-    /* Skor warna kecil */
-    .warna-skor {
-      font-size: 0.58rem;
-      color: var(--text-soft);
-      font-weight: 600;
-    }
+    .btn-live .live-dot { width: 6px; height: 6px; background: #ff4444; border-radius: 50%; animation: pulse 1.2s infinite; }
+    .warna-skor { font-size: 0.58rem; color: var(--text-soft); font-weight: 600; }
 
     /* ============================================================
-       MODAL LIVE STREAM
+       MODAL LIVE STREAM — dengan Canvas Overlay
        ============================================================ */
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.72);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.72); z-index: 1000;
+      align-items: center; justify-content: center;
     }
     .modal-overlay.open { display: flex; }
 
     .modal-box {
-      background: #0f1e18;
-      border-radius: 18px;
-      width: min(700px, 96vw);
-      overflow: hidden;
+      background: #0f1e18; border-radius: 18px;
+      width: min(700px, 96vw); overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      display: flex;
-      flex-direction: column;
+      display: flex; flex-direction: column;
     }
 
     .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 18px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 18px; border-bottom: 1px solid rgba(255,255,255,0.08);
     }
-    .modal-header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .modal-header-left { display: flex; align-items: center; gap: 10px; }
     .modal-live-badge {
-      background: #e53935;
-      color: #fff;
-      font-size: 0.62rem;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 5px;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      background: #e53935; color: #fff;
+      font-size: 0.62rem; font-weight: 800; padding: 3px 8px;
+      border-radius: 5px; letter-spacing: 0.5px;
+      display: flex; align-items: center; gap: 5px;
     }
-    .modal-live-badge .dot {
-      width: 6px; height: 6px;
-      background: #fff; border-radius: 50%;
-      animation: pulse 1s infinite;
-    }
-    .modal-title {
-      color: #fff;
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
+    .modal-live-badge .dot { width: 6px; height: 6px; background: #fff; border-radius: 50%; animation: pulse 1s infinite; }
+    .modal-title { color: #fff; font-size: 0.85rem; font-weight: 700; }
     .modal-close {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: #fff;
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 0.8rem;
+      background: rgba(255,255,255,0.1); border: none; color: #fff;
+      width: 28px; height: 28px; border-radius: 50%;
+      cursor: pointer; font-size: 0.8rem;
       display: flex; align-items: center; justify-content: center;
       transition: background 0.15s;
     }
     .modal-close:hover { background: rgba(255,255,255,0.2); }
 
+    /* ── CANVAS STREAM WRAPPER ── */
     .modal-stream {
-      position: relative;
-      width: 100%;
-      background: #000;
+      position: relative; width: 100%; background: #000;
       aspect-ratio: 4/3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
-    .modal-stream img {
+
+    /*
+     * <img> stream tersembunyi — hanya sebagai sumber pixel untuk canvas.
+     * Harus tetap di DOM supaya browser terus decode MJPEG.
+     */
+    #stream-img {
+      position: absolute;
+      width: 1px; height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Canvas menggantikan <img> sebagai tampilan utama */
+    #stream-canvas {
       width: 100%;
       height: 100%;
-      object-fit: cover;
       display: block;
+      object-fit: cover;
     }
+
     .stream-error {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      color: rgba(255,255,255,0.5);
-      font-size: 0.8rem;
-      font-weight: 600;
+      display: none; flex-direction: column; align-items: center; gap: 10px;
+      color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600;
+      position: absolute; inset: 0; justify-content: center;
     }
     .stream-error i { font-size: 2rem; opacity: 0.4; }
 
+    /* ── BBOX CONTROLS (toggle overlay) ── */
+    .bbox-toggle-wrap {
+      display: flex; align-items: center; gap: 6px;
+      margin-left: auto;
+    }
+    .bbox-toggle-label {
+      color: rgba(255,255,255,0.55); font-size: 0.65rem; font-weight: 600; cursor: pointer;
+    }
+    .bbox-chk { cursor: pointer; accent-color: var(--green-light); width: 14px; height: 14px; }
+
+    /* ── MODAL INFO BAR ── */
     .modal-overlay-info {
       padding: 12px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 8px;
       border-top: 1px solid rgba(255,255,255,0.08);
     }
-
-    .fase-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .fase-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .fase-badge {
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.68rem;
-      font-weight: 700;
-      background: var(--green-light);
-      color: #fff;
+      padding: 4px 12px; border-radius: 20px;
+      font-size: 0.68rem; font-weight: 700;
+      background: var(--green-light); color: #fff;
     }
     .fase-badge.fase1 { background: #f9c74f; color: #5a3e00; }
     .fase-badge.fase2 { background: #4caf50; color: #fff; }
@@ -344,41 +283,12 @@
     .fase-badge.fase4 { background: #1a237e; color: #fff; }
     .fase-badge.none  { background: #78909c; color: #fff; }
 
-    .skor-bar-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .skor-label {
-      color: rgba(255,255,255,0.5);
-      font-size: 0.65rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    .skor-bar {
-      width: 100px;
-      height: 6px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .skor-fill {
-      height: 100%;
-      background: var(--green-light);
-      border-radius: 3px;
-      transition: width 0.4s ease;
-    }
-    .skor-val {
-      color: #fff;
-      font-size: 0.7rem;
-      font-weight: 700;
-      min-width: 32px;
-    }
-    .menit-info {
-      color: rgba(255,255,255,0.35);
-      font-size: 0.62rem;
-      font-weight: 600;
-    }
+    .skor-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .skor-label { color: rgba(255,255,255,0.5); font-size: 0.65rem; font-weight: 600; white-space: nowrap; }
+    .skor-bar { width: 100px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+    .skor-fill { height: 100%; background: var(--green-light); border-radius: 3px; transition: width 0.4s ease; }
+    .skor-val { color: #fff; font-size: 0.7rem; font-weight: 700; min-width: 32px; }
+    .menit-info { color: rgba(255,255,255,0.35); font-size: 0.62rem; font-weight: 600; }
 
     /* Chart */
     .chart-panel {
@@ -523,7 +433,7 @@
               <span class="badge badge-warning" id="badge-lux">Menunggu...</span>
             </div>
 
-            <!-- Warna Air — dengan tombol LIVE -->
+            <!-- Warna Air -->
             <div class="sensor-card">
               <div class="sensor-card-header">
                 <i class="fas fa-tint"></i>
@@ -638,7 +548,7 @@
 </div>
 
 <!-- ============================================================
-     MODAL LIVE STREAM
+     MODAL LIVE STREAM — dengan Canvas Overlay Bounding Box
      ============================================================ -->
 <div class="modal-overlay" id="liveModal" onclick="closeLiveModalOutside(event)">
   <div class="modal-box">
@@ -648,15 +558,32 @@
         <div class="modal-live-badge"><span class="dot"></span> LIVE</div>
         <span class="modal-title">ESP32-CAM — Kolam Spirulina</span>
       </div>
-      <button class="modal-close" onclick="closeLiveModal()"><i class="fas fa-times"></i></button>
+      <!-- Toggle overlay bounding box -->
+      <div class="bbox-toggle-wrap">
+        <input type="checkbox" id="bbox-toggle" class="bbox-chk" checked>
+        <label for="bbox-toggle" class="bbox-toggle-label">Tampilkan bbox</label>
+      </div>
+      <button class="modal-close" onclick="closeLiveModal()" style="margin-left:10px;">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
 
+    <!--
+      Struktur stream:
+      - <img id="stream-img">  : tersembunyi, decode MJPEG terus-menerus
+      - <canvas id="stream-canvas"> : menampilkan frame + bbox overlay
+      - <div class="stream-error">  : tampil kalau stream gagal
+    -->
     <div class="modal-stream">
       <img id="stream-img"
            src=""
-           alt="Live Stream"
+           alt=""
+           crossorigin="anonymous"
            onerror="showStreamError()"
            onload="hideStreamError()">
+
+      <canvas id="stream-canvas"></canvas>
+
       <div class="stream-error" id="stream-error">
         <i class="fas fa-video-slash"></i>
         <span>Stream tidak tersedia</span>
@@ -775,8 +702,25 @@
     return 'none';
   }
 
-  // ── STATE WARNA GLOBAL (dari cek_sensor.php / Railway) ───────
-  let _warnaData = { warna:'tidak terdeteksi', status_warna:'-', skor_warna:0, warna_menit_lalu:null };
+  // ── Warna bbox per fase ───────────────────────────────────────
+  function faseToBboxColor(warna) {
+    if (!warna) return '#78909c';
+    const w = warna.toLowerCase();
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#f9c74f';
+    if (w.includes('pertumbuhan') || w.includes('fase 2')) return '#4caf50';
+    if (w.includes('optimal') || w.includes('fase 3'))    return '#2dc4a2';
+    if (w.includes('panen') || w.includes('fase 4'))      return '#7986cb';
+    return '#78909c';
+  }
+
+  // ── STATE GLOBAL ──────────────────────────────────────────────
+  let _warnaData = {
+    warna: 'tidak terdeteksi',
+    status_warna: '-',
+    skor_warna: 0,
+    warna_menit_lalu: null,
+    bbox: null,   // { x, y, w, h } normalized 0.0–1.0
+  };
 
   // ── LOAD REAL-TIME ────────────────────────────────────────────
   function loadLatest() {
@@ -806,25 +750,23 @@
         }
 
         // Warna
-        const warna      = s.warna        || 'tidak terdeteksi';
-        const statusW    = s.status_warna || '-';
-        const skorW      = parseFloat(s.skor_warna || s.persentase_warna || 0);
-        const menitW     = s.warna_menit_lalu !== undefined ? s.warna_menit_lalu : null;
+        const warna   = s.warna        || 'tidak terdeteksi';
+        const statusW = s.status_warna || '-';
+        const skorW   = parseFloat(s.skor_warna || s.persentase_warna || 0);
+        const menitW  = s.warna_menit_lalu !== undefined ? s.warna_menit_lalu : null;
 
-        _warnaData = { warna, status_warna: statusW, skor_warna: skorW, warna_menit_lalu: menitW };
+        _warnaData = {
+          warna, status_warna: statusW, skor_warna: skorW,
+          warna_menit_lalu: menitW,
+          bbox: s.bbox || null,
+        };
 
         document.getElementById('warna-box').style.background = faseToBg(warna);
         document.getElementById('badge-warna').textContent = (statusW && statusW !== '-') ? statusW : warna;
 
-        // Tampilkan skor kecil di bawah warna-box
         const skorEl = document.getElementById('warna-skor');
-        if (skorW > 0) {
-          skorEl.textContent = 'Skor: ' + skorW.toFixed(3);
-        } else {
-          skorEl.textContent = '';
-        }
+        skorEl.textContent = skorW > 0 ? 'Skor: ' + skorW.toFixed(3) : '';
 
-        // Update overlay modal kalau sedang terbuka
         updateModalOverlay();
 
         // Last update
@@ -836,29 +778,202 @@
         document.getElementById('togBasa').checked    = s.pompa_basa   === 'DOSING';
         document.getElementById('togNormal').checked  = s.pompa_normal === 'DOSING';
         document.getElementById('togUV').checked      = s.uv           === 'ON';
-        document.getElementById('togNutrisi').checked = false;
+        document.getElementById('togNutrisi').checked = s.pompa_nutrisi === 'ON';
       })
       .catch(() => {
         document.getElementById('last-update').textContent = 'KOLAM 1 · Offline';
       });
   }
 
-  // ── MODAL LIVE STREAM ─────────────────────────────────────────
+  // ================================================================
+  //  CANVAS STREAM + BOUNDING BOX OVERLAY
+  // ================================================================
+
+  let _canvasAnimId   = null;   // requestAnimationFrame ID
+  let _bboxVisible    = true;   // toggle dari checkbox
+
+  const _canvas    = document.getElementById('stream-canvas');
+  const _ctx       = _canvas.getContext('2d');
+  const _streamImg = document.getElementById('stream-img');
+
+  // Sinkronkan toggle checkbox
+  document.getElementById('bbox-toggle').addEventListener('change', function() {
+    _bboxVisible = this.checked;
+  });
+
+  /**
+   * Loop RAF: salin pixel dari <img> stream ke canvas,
+   * lalu gambar bounding box kalau ada data dan toggle ON.
+   */
+  function drawStreamLoop() {
+    _canvasAnimId = requestAnimationFrame(drawStreamLoop);
+
+    // Jangan gambar kalau img belum siap / error
+    if (_streamImg.naturalWidth === 0) return;
+
+    // Sesuaikan ukuran canvas dengan container
+    const container = _canvas.parentElement;
+    const cw = container.clientWidth;
+    const ch = container.clientHeight;
+    if (_canvas.width !== cw || _canvas.height !== ch) {
+      _canvas.width  = cw;
+      _canvas.height = ch;
+    }
+
+    // Gambar frame stream (object-fit: cover style — center-crop)
+    const imgAspect = _streamImg.naturalWidth / _streamImg.naturalHeight;
+    const canAspect = cw / ch;
+    let sx = 0, sy = 0, sw = _streamImg.naturalWidth, sh = _streamImg.naturalHeight;
+    if (imgAspect > canAspect) {
+      // Gambar lebih lebar → crop kiri-kanan
+      sw = _streamImg.naturalHeight * canAspect;
+      sx = (_streamImg.naturalWidth - sw) / 2;
+    } else {
+      // Gambar lebih tinggi → crop atas-bawah
+      sh = _streamImg.naturalWidth / canAspect;
+      sy = (_streamImg.naturalHeight - sh) / 2;
+    }
+    _ctx.drawImage(_streamImg, sx, sy, sw, sh, 0, 0, cw, ch);
+
+    // Gambar bbox overlay
+    const bbox = _warnaData.bbox;
+    if (_bboxVisible && bbox && _warnaData.warna && _warnaData.warna !== 'tidak terdeteksi') {
+      drawBbox(bbox, cw, ch, sx, sy, sw, sh);
+    }
+  }
+
+  /**
+   * Gambar bounding box + label fase di atas canvas.
+   * bbox koordinat normalized (0.0–1.0) relatif ke foto asli.
+   * Perlu di-map ke region yang di-crop & di-scale ke canvas.
+   */
+  function drawBbox(bbox, cw, ch, cropX, cropY, cropW, cropH) {
+    // Konversi normalized → pixel di foto asli
+    const frameW = _streamImg.naturalWidth;
+    const frameH = _streamImg.naturalHeight;
+    const absX = bbox.x * frameW;
+    const absY = bbox.y * frameH;
+    const absW = bbox.w * frameW;
+    const absH = bbox.h * frameH;
+
+    // Koreksi crop (sama dengan transformasi drawImage di atas)
+    const scaleX = cw / cropW;
+    const scaleY = ch / cropH;
+
+    const rx = (absX - cropX) * scaleX;
+    const ry = (absY - cropY) * scaleY;
+    const rw = absW * scaleX;
+    const rh = absH * scaleY;
+
+    // Kliping — pastikan tidak keluar canvas
+    const clampX = Math.max(0, rx);
+    const clampY = Math.max(0, ry);
+    const clampW = Math.min(rw, cw - clampX);
+    const clampH = Math.min(rh, ch - clampY);
+
+    if (clampW <= 0 || clampH <= 0) return;
+
+    const color = faseToBboxColor(_warnaData.warna);
+    const label = _warnaData.warna;
+    const skor  = _warnaData.skor_warna;
+
+    // ── Kotak bbox ────────────────────────────────────────────
+    _ctx.save();
+
+    // Bayangan halus supaya garis keliatan di semua kondisi warna
+    _ctx.shadowColor = 'rgba(0,0,0,0.6)';
+    _ctx.shadowBlur  = 4;
+
+    _ctx.strokeStyle = color;
+    _ctx.lineWidth   = 2.5;
+    _ctx.setLineDash([6, 3]);
+    _ctx.strokeRect(clampX, clampY, clampW, clampH);
+
+    // Sudut tebal (corner accent) — 4 sudut 20px
+    _ctx.setLineDash([]);
+    _ctx.lineWidth = 4;
+    const cs = 20; // corner size
+    // kiri atas
+    _ctx.beginPath(); _ctx.moveTo(clampX, clampY + cs); _ctx.lineTo(clampX, clampY); _ctx.lineTo(clampX + cs, clampY); _ctx.stroke();
+    // kanan atas
+    _ctx.beginPath(); _ctx.moveTo(clampX + clampW - cs, clampY); _ctx.lineTo(clampX + clampW, clampY); _ctx.lineTo(clampX + clampW, clampY + cs); _ctx.stroke();
+    // kiri bawah
+    _ctx.beginPath(); _ctx.moveTo(clampX, clampY + clampH - cs); _ctx.lineTo(clampX, clampY + clampH); _ctx.lineTo(clampX + cs, clampY + clampH); _ctx.stroke();
+    // kanan bawah
+    _ctx.beginPath(); _ctx.moveTo(clampX + clampW - cs, clampY + clampH); _ctx.lineTo(clampX + clampW, clampY + clampH); _ctx.lineTo(clampX + clampW, clampY + clampH - cs); _ctx.stroke();
+
+    _ctx.restore();
+
+    // ── Label fase + skor di atas bbox ───────────────────────
+    const labelText = label + '  ' + (skor > 0 ? skor.toFixed(3) : '');
+    const fontSize  = Math.max(11, Math.min(14, clampW / 12));
+    _ctx.save();
+    _ctx.font        = `700 ${fontSize}px 'Plus Jakarta Sans', sans-serif`;
+    const textW      = _ctx.measureText(labelText).width;
+    const padX       = 8, padY = 5;
+    const tagH       = fontSize + padY * 2;
+    const tagX       = clampX;
+    const tagY       = clampY > tagH + 2 ? clampY - tagH - 2 : clampY + 2;  // atas bbox, atau di dalam kalau mepet tepi
+
+    // Background pill label (roundRect dengan fallback manual untuk browser lama)
+    _ctx.fillStyle   = color;
+    _ctx.globalAlpha = 0.88;
+    _ctx.beginPath();
+    const tw = textW + padX * 2, r = 5;
+    if (_ctx.roundRect) {
+      _ctx.roundRect(tagX, tagY, tw, tagH, r);
+    } else {
+      _ctx.moveTo(tagX + r, tagY);
+      _ctx.lineTo(tagX + tw - r, tagY);
+      _ctx.arcTo(tagX + tw, tagY, tagX + tw, tagY + r, r);
+      _ctx.lineTo(tagX + tw, tagY + tagH - r);
+      _ctx.arcTo(tagX + tw, tagY + tagH, tagX + tw - r, tagY + tagH, r);
+      _ctx.lineTo(tagX + r, tagY + tagH);
+      _ctx.arcTo(tagX, tagY + tagH, tagX, tagY + tagH - r, r);
+      _ctx.lineTo(tagX, tagY + r);
+      _ctx.arcTo(tagX, tagY, tagX + r, tagY, r);
+      _ctx.closePath();
+    }
+    _ctx.fill();
+
+    // Teks label
+    _ctx.globalAlpha = 1;
+    _ctx.fillStyle   = '#ffffff';
+    _ctx.textBaseline = 'middle';
+    _ctx.fillText(labelText, tagX + padX, tagY + tagH / 2);
+
+    _ctx.restore();
+  }
+
+  // ================================================================
+  //  MODAL LIVE STREAM — buka / tutup
+  // ================================================================
+
   function openLiveModal() {
     const modal = document.getElementById('liveModal');
     modal.classList.add('open');
-    // Set src stream
-    const img = document.getElementById('stream-img');
-    img.src = STREAM_URL;
+
+    // Set src stream ke <img> tersembunyi
+    _streamImg.src = STREAM_URL;
     document.getElementById('stream-error').style.display = 'none';
-    img.style.display = 'block';
+
+    // Mulai loop canvas
+    if (_canvasAnimId) cancelAnimationFrame(_canvasAnimId);
+    drawStreamLoop();
+
     updateModalOverlay();
   }
 
   function closeLiveModal() {
     document.getElementById('liveModal').classList.remove('open');
-    // Stop stream dengan hapus src
-    document.getElementById('stream-img').src = '';
+
+    // Hentikan loop canvas & bersihkan
+    if (_canvasAnimId) {
+      cancelAnimationFrame(_canvasAnimId);
+      _canvasAnimId = null;
+    }
+    _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
+    _streamImg.src = '';
   }
 
   function closeLiveModalOutside(e) {
@@ -867,12 +982,12 @@
 
   function showStreamError() {
     document.getElementById('stream-error').style.display = 'flex';
-    document.getElementById('stream-img').style.display = 'none';
+    _canvas.style.display = 'none';
   }
 
   function hideStreamError() {
     document.getElementById('stream-error').style.display = 'none';
-    document.getElementById('stream-img').style.display = 'block';
+    _canvas.style.display = 'block';
   }
 
   function updateModalOverlay() {
@@ -881,7 +996,8 @@
     badge.textContent = warna || 'Tidak terdeteksi';
     badge.className   = 'fase-badge ' + faseToClass(warna);
 
-    document.getElementById('modal-status-warna').textContent = (status_warna && status_warna !== '-') ? status_warna : '—';
+    document.getElementById('modal-status-warna').textContent =
+      (status_warna && status_warna !== '-') ? status_warna : '—';
 
     const pct = Math.min(100, Math.round((skor_warna || 0) * 100));
     document.getElementById('modal-skor-fill').style.width = pct + '%';
@@ -889,12 +1005,12 @@
 
     const mnt = warna_menit_lalu;
     document.getElementById('modal-menit').textContent =
-      mnt === null ? '— menit lalu' :
-      mnt < 1 ? 'Deteksi baru saja' :
-      'Deteksi ' + mnt + ' menit lalu';
+      mnt === null       ? '— menit lalu' :
+      mnt < 1            ? 'Deteksi baru saja' :
+                           'Deteksi ' + mnt + ' menit lalu';
   }
 
-  // ESC untuk tutup modal
+  // ESC tutup modal
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveModal(); });
 
   // ── JALANKAN ──────────────────────────────────────────────────
