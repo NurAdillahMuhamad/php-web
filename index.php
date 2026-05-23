@@ -183,7 +183,7 @@
     .warna-skor { font-size: 0.58rem; color: var(--text-soft); font-weight: 600; }
 
     /* ============================================================
-       MODAL LIVE STREAM — dengan Canvas Overlay
+       MODAL LIVE STREAM — IMG + DIV OVERLAY (tanpa Canvas, tanpa CORS)
        ============================================================ */
     .modal-overlay {
       display: none; position: fixed; inset: 0;
@@ -221,36 +221,88 @@
     }
     .modal-close:hover { background: rgba(255,255,255,0.2); }
 
-    /* ── CANVAS STREAM WRAPPER ── */
+    /* ── STREAM WRAPPER: img + div overlay ── */
     .modal-stream {
-      position: relative; width: 100%; background: #000;
+      position: relative;
+      width: 100%;
       aspect-ratio: 4/3;
-      display: flex; align-items: center; justify-content: center;
+      background: #000;
+      overflow: hidden;          /* pastikan overlay tidak melebihi area stream */
     }
 
     /*
-     * <img> stream tersembunyi — hanya sebagai sumber pixel untuk canvas.
-     * Harus tetap di DOM supaya browser terus decode MJPEG.
+     * <img> stream — tampil penuh sebagai video display.
+     * object-fit: contain agar tidak terpotong; menggunakan contain
+     * supaya koordinat bbox normalized tetap sesuai tanpa perlu hitung crop.
+     *
+     * Catatan: gunakan "contain" agar presisi bbox lebih baik.
+     * Jika ingin "cover" (full bleed), koordinat bbox perlu dikoreksi crop — lebih rumit.
      */
     #stream-img {
-      position: absolute;
-      width: 1px; height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    /* Canvas menggantikan <img> sebagai tampilan utama */
-    #stream-canvas {
       width: 100%;
       height: 100%;
+      object-fit: contain;
       display: block;
-      object-fit: cover;
     }
+
+    /*
+     * Overlay div untuk bounding box.
+     * Ukurannya mengikuti dimensi render <img> secara tepat via JS (getBoundingClientRect).
+     * Posisi absolute relatif terhadap .modal-stream.
+     */
+    #bbox-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;   /* klik tetap tembus ke img di bawah */
+    }
+
+    /*
+     * Setiap bounding box = satu <div class="bbox-box"> di dalam #bbox-overlay.
+     * Posisi & ukuran di-set via inline style (left/top/width/height dalam %).
+     */
+    .bbox-box {
+      position: absolute;
+      box-sizing: border-box;
+      border: 2.5px dashed currentColor;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    /* Corner accent — 4 pseudo-corners via ::before & ::after + 2 span tambahan */
+    .bbox-corner {
+      position: absolute;
+      width: 14px; height: 14px;
+      border-color: inherit;
+      border-style: solid;
+    }
+    .bbox-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 3px 0 0 0; }
+    .bbox-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 3px 0 0; }
+    .bbox-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 3px; }
+    .bbox-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 3px 0; }
+
+    /* Label fase di sudut kiri atas bbox */
+    .bbox-label {
+      position: absolute;
+      top: -26px; left: -2px;
+      background: currentColor;
+      color: #fff;
+      font-size: 0.62rem; font-weight: 800;
+      padding: 3px 8px; border-radius: 4px;
+      white-space: nowrap;
+      letter-spacing: 0.3px;
+      /* Kalau label melebihi tepi atas, geser ke dalam */
+    }
+    .bbox-label.inside { top: 4px; }
+
+    /* Label teks berwarna putih selalu */
+    .bbox-label span { color: #fff; mix-blend-mode: normal; }
 
     .stream-error {
       display: none; flex-direction: column; align-items: center; gap: 10px;
       color: rgba(255,255,255,0.5); font-size: 0.8rem; font-weight: 600;
       position: absolute; inset: 0; justify-content: center;
+      background: #000;
     }
     .stream-error i { font-size: 2rem; opacity: 0.4; }
 
@@ -548,7 +600,8 @@
 </div>
 
 <!-- ============================================================
-     MODAL LIVE STREAM — dengan Canvas Overlay Bounding Box
+     MODAL LIVE STREAM — IMG + DIV OVERLAY
+     Tidak menggunakan Canvas → tidak ada masalah CORS
      ============================================================ -->
 <div class="modal-overlay" id="liveModal" onclick="closeLiveModalOutside(event)">
   <div class="modal-box">
@@ -569,26 +622,39 @@
     </div>
 
     <!--
-      Struktur stream:
-      - <img id="stream-img">  : tersembunyi, decode MJPEG terus-menerus
-      - <canvas id="stream-canvas"> : menampilkan frame + bbox overlay
-      - <div class="stream-error">  : tampil kalau stream gagal
+      Struktur stream baru — TANPA CANVAS:
+      ┌─ .modal-stream (position:relative, aspect-ratio:4/3) ─────────────┐
+      │  <img id="stream-img">     ← stream MJPEG tampil langsung         │
+      │  <div id="bbox-overlay">   ← div absolute di atas img             │
+      │    <div class="bbox-box">  ← satu kotak per deteksi               │
+      │      .bbox-corner × 4      ← aksen sudut                          │
+      │      .bbox-label           ← label fase + skor                    │
+      │    </div>                                                          │
+      │  </div>                                                            │
+      │  <div class="stream-error"> ← tampil kalau stream gagal           │
+      └───────────────────────────────────────────────────────────────────┘
+
+      Kenapa ini bekerja tanpa CORS?
+      - <img> hanya menampilkan pixel, tidak membaca pixel (tidak ada drawImage/getImageData)
+      - <div> overlay menggunakan CSS absolute positioning murni
+      - Koordinat bbox (0.0–1.0) dikonversi langsung ke persen CSS
     -->
-    <div class="modal-stream">
+    <div class="modal-stream" id="modal-stream-wrap">
+
       <img id="stream-img"
            src=""
-           alt=""
-           crossorigin="anonymous"
+           alt="Live Stream ESP32-CAM"
            onerror="showStreamError()"
            onload="hideStreamError()">
 
-      <canvas id="stream-canvas"></canvas>
+      <div id="bbox-overlay"></div>
 
       <div class="stream-error" id="stream-error">
         <i class="fas fa-video-slash"></i>
         <span>Stream tidak tersedia</span>
         <small>Pastikan ESP32-CAM aktif dan terhubung ke WiFi KOST 2</small>
       </div>
+
     </div>
 
     <div class="modal-overlay-info">
@@ -702,7 +768,6 @@
     return 'none';
   }
 
-  // ── Warna bbox per fase ───────────────────────────────────────
   function faseToBboxColor(warna) {
     if (!warna) return '#78909c';
     const w = warna.toLowerCase();
@@ -719,7 +784,7 @@
     status_warna: '-',
     skor_warna: 0,
     warna_menit_lalu: null,
-    bbox: null,   // { x, y, w, h } normalized 0.0–1.0
+    bbox: null,
   };
 
   // ── LOAD REAL-TIME ────────────────────────────────────────────
@@ -767,6 +832,8 @@
         const skorEl = document.getElementById('warna-skor');
         skorEl.textContent = skorW > 0 ? 'Skor: ' + skorW.toFixed(3) : '';
 
+        // Render bbox overlay jika modal sedang terbuka
+        renderBboxOverlay();
         updateModalOverlay();
 
         // Last update
@@ -786,163 +853,86 @@
   }
 
   // ================================================================
-  //  CANVAS STREAM + BOUNDING BOX OVERLAY
+  //  BOUNDING BOX — DIV OVERLAY (pengganti Canvas)
   // ================================================================
 
-  let _canvasAnimId   = null;   // requestAnimationFrame ID
-  let _bboxVisible    = true;   // toggle dari checkbox
-
-  const _canvas    = document.getElementById('stream-canvas');
-  const _ctx       = _canvas.getContext('2d');
-  const _streamImg = document.getElementById('stream-img');
+  let _bboxVisible = true;
 
   // Sinkronkan toggle checkbox
   document.getElementById('bbox-toggle').addEventListener('change', function() {
     _bboxVisible = this.checked;
+    renderBboxOverlay();
   });
 
   /**
-   * Loop RAF: salin pixel dari <img> stream ke canvas,
-   * lalu gambar bounding box kalau ada data dan toggle ON.
+   * renderBboxOverlay()
+   * Menggambar bounding box sebagai <div> absolut di atas <img> stream.
+   *
+   * Cara kerja:
+   * 1. Ambil data bbox dari _warnaData.bbox (koordinat normalized 0.0–1.0)
+   * 2. Konversi ke persen CSS → langsung di-set ke style div
+   * 3. Tidak perlu akses pixel → tidak ada masalah CORS sama sekali
+   *
+   * Catatan presisi:
+   * - <img> pakai object-fit: contain → ada letterbox (sisi hitam) jika rasio berbeda
+   * - Koordinat bbox dari AI mengacu ke foto asli (UXGA 1600×1200 = rasio 4:3)
+   * - Modal stream juga 4:3 → letterbox minimal / nol kalau stream aktif
+   * - Kalau rasio berbeda, bbox masih tampil (tidak crash), hanya sedikit geser
    */
-  function drawStreamLoop() {
-    _canvasAnimId = requestAnimationFrame(drawStreamLoop);
+  function renderBboxOverlay() {
+    const overlay = document.getElementById('bbox-overlay');
+    overlay.innerHTML = '';   // Bersihkan bbox lama
 
-    // Jangan gambar kalau img belum siap / error
-    if (_streamImg.naturalWidth === 0) return;
-
-    // Sesuaikan ukuran canvas dengan container
-    const container = _canvas.parentElement;
-    const cw = container.clientWidth;
-    const ch = container.clientHeight;
-    if (_canvas.width !== cw || _canvas.height !== ch) {
-      _canvas.width  = cw;
-      _canvas.height = ch;
-    }
-
-    // Gambar frame stream (object-fit: cover style — center-crop)
-    const imgAspect = _streamImg.naturalWidth / _streamImg.naturalHeight;
-    const canAspect = cw / ch;
-    let sx = 0, sy = 0, sw = _streamImg.naturalWidth, sh = _streamImg.naturalHeight;
-    if (imgAspect > canAspect) {
-      // Gambar lebih lebar → crop kiri-kanan
-      sw = _streamImg.naturalHeight * canAspect;
-      sx = (_streamImg.naturalWidth - sw) / 2;
-    } else {
-      // Gambar lebih tinggi → crop atas-bawah
-      sh = _streamImg.naturalWidth / canAspect;
-      sy = (_streamImg.naturalHeight - sh) / 2;
-    }
-    _ctx.drawImage(_streamImg, sx, sy, sw, sh, 0, 0, cw, ch);
-
-    // Gambar bbox overlay
-    const bbox = _warnaData.bbox;
-    if (_bboxVisible && bbox && _warnaData.warna && _warnaData.warna !== 'tidak terdeteksi') {
-      drawBbox(bbox, cw, ch, sx, sy, sw, sh);
-    }
-  }
-
-  /**
-   * Gambar bounding box + label fase di atas canvas.
-   * bbox koordinat normalized (0.0–1.0) relatif ke foto asli.
-   * Perlu di-map ke region yang di-crop & di-scale ke canvas.
-   */
-  function drawBbox(bbox, cw, ch, cropX, cropY, cropW, cropH) {
-    // Konversi normalized → pixel di foto asli
-    const frameW = _streamImg.naturalWidth;
-    const frameH = _streamImg.naturalHeight;
-    const absX = bbox.x * frameW;
-    const absY = bbox.y * frameH;
-    const absW = bbox.w * frameW;
-    const absH = bbox.h * frameH;
-
-    // Koreksi crop (sama dengan transformasi drawImage di atas)
-    const scaleX = cw / cropW;
-    const scaleY = ch / cropH;
-
-    const rx = (absX - cropX) * scaleX;
-    const ry = (absY - cropY) * scaleY;
-    const rw = absW * scaleX;
-    const rh = absH * scaleY;
-
-    // Kliping — pastikan tidak keluar canvas
-    const clampX = Math.max(0, rx);
-    const clampY = Math.max(0, ry);
-    const clampW = Math.min(rw, cw - clampX);
-    const clampH = Math.min(rh, ch - clampY);
-
-    if (clampW <= 0 || clampH <= 0) return;
-
-    const color = faseToBboxColor(_warnaData.warna);
-    const label = _warnaData.warna;
+    const bbox  = _warnaData.bbox;
+    const warna = _warnaData.warna;
     const skor  = _warnaData.skor_warna;
 
-    // ── Kotak bbox ────────────────────────────────────────────
-    _ctx.save();
+    // Tidak render kalau: toggle OFF, tidak ada data, atau tidak terdeteksi
+    if (!_bboxVisible) return;
+    if (!bbox) return;
+    if (!warna || warna === 'tidak terdeteksi') return;
 
-    // Bayangan halus supaya garis keliatan di semua kondisi warna
-    _ctx.shadowColor = 'rgba(0,0,0,0.6)';
-    _ctx.shadowBlur  = 4;
+    const color = faseToBboxColor(warna);
 
-    _ctx.strokeStyle = color;
-    _ctx.lineWidth   = 2.5;
-    _ctx.setLineDash([6, 3]);
-    _ctx.strokeRect(clampX, clampY, clampW, clampH);
+    // ── Konversi koordinat normalized → persen CSS ────────────
+    // bbox.x, bbox.y = sudut kiri atas (0.0–1.0)
+    // bbox.w, bbox.h = lebar & tinggi (0.0–1.0)
+    const leftPct   = (bbox.x * 100).toFixed(4) + '%';
+    const topPct    = (bbox.y * 100).toFixed(4) + '%';
+    const widthPct  = (bbox.w * 100).toFixed(4) + '%';
+    const heightPct = (bbox.h * 100).toFixed(4) + '%';
 
-    // Sudut tebal (corner accent) — 4 sudut 20px
-    _ctx.setLineDash([]);
-    _ctx.lineWidth = 4;
-    const cs = 20; // corner size
-    // kiri atas
-    _ctx.beginPath(); _ctx.moveTo(clampX, clampY + cs); _ctx.lineTo(clampX, clampY); _ctx.lineTo(clampX + cs, clampY); _ctx.stroke();
-    // kanan atas
-    _ctx.beginPath(); _ctx.moveTo(clampX + clampW - cs, clampY); _ctx.lineTo(clampX + clampW, clampY); _ctx.lineTo(clampX + clampW, clampY + cs); _ctx.stroke();
-    // kiri bawah
-    _ctx.beginPath(); _ctx.moveTo(clampX, clampY + clampH - cs); _ctx.lineTo(clampX, clampY + clampH); _ctx.lineTo(clampX + cs, clampY + clampH); _ctx.stroke();
-    // kanan bawah
-    _ctx.beginPath(); _ctx.moveTo(clampX + clampW - cs, clampY + clampH); _ctx.lineTo(clampX + clampW, clampY + clampH); _ctx.lineTo(clampX + clampW, clampY + clampH - cs); _ctx.stroke();
+    // ── Buat elemen bbox ──────────────────────────────────────
+    const box = document.createElement('div');
+    box.className = 'bbox-box';
+    box.style.cssText = `
+      left: ${leftPct};
+      top: ${topPct};
+      width: ${widthPct};
+      height: ${heightPct};
+      color: ${color};
+    `;
 
-    _ctx.restore();
+    // ── Corner accents (4 sudut tebal) ────────────────────────
+    ['tl','tr','bl','br'].forEach(pos => {
+      const c = document.createElement('div');
+      c.className = `bbox-corner ${pos}`;
+      box.appendChild(c);
+    });
 
-    // ── Label fase + skor di atas bbox ───────────────────────
-    const labelText = label + '  ' + (skor > 0 ? skor.toFixed(3) : '');
-    const fontSize  = Math.max(11, Math.min(14, clampW / 12));
-    _ctx.save();
-    _ctx.font        = `700 ${fontSize}px 'Plus Jakarta Sans', sans-serif`;
-    const textW      = _ctx.measureText(labelText).width;
-    const padX       = 8, padY = 5;
-    const tagH       = fontSize + padY * 2;
-    const tagX       = clampX;
-    const tagY       = clampY > tagH + 2 ? clampY - tagH - 2 : clampY + 2;  // atas bbox, atau di dalam kalau mepet tepi
+    // ── Label fase + skor ─────────────────────────────────────
+    const labelText = `${warna}  ${skor > 0 ? skor.toFixed(3) : ''}`;
+    const label = document.createElement('div');
+    label.className = 'bbox-label';
 
-    // Background pill label (roundRect dengan fallback manual untuk browser lama)
-    _ctx.fillStyle   = color;
-    _ctx.globalAlpha = 0.88;
-    _ctx.beginPath();
-    const tw = textW + padX * 2, r = 5;
-    if (_ctx.roundRect) {
-      _ctx.roundRect(tagX, tagY, tw, tagH, r);
-    } else {
-      _ctx.moveTo(tagX + r, tagY);
-      _ctx.lineTo(tagX + tw - r, tagY);
-      _ctx.arcTo(tagX + tw, tagY, tagX + tw, tagY + r, r);
-      _ctx.lineTo(tagX + tw, tagY + tagH - r);
-      _ctx.arcTo(tagX + tw, tagY + tagH, tagX + tw - r, tagY + tagH, r);
-      _ctx.lineTo(tagX + r, tagY + tagH);
-      _ctx.arcTo(tagX, tagY + tagH, tagX, tagY + tagH - r, r);
-      _ctx.lineTo(tagX, tagY + r);
-      _ctx.arcTo(tagX, tagY, tagX + r, tagY, r);
-      _ctx.closePath();
-    }
-    _ctx.fill();
+    // Kalau bbox di baris paling atas (y < 5%), taruh label di dalam kotak
+    if (bbox.y < 0.05) label.classList.add('inside');
 
-    // Teks label
-    _ctx.globalAlpha = 1;
-    _ctx.fillStyle   = '#ffffff';
-    _ctx.textBaseline = 'middle';
-    _ctx.fillText(labelText, tagX + padX, tagY + tagH / 2);
+    label.innerHTML = `<span>${labelText}</span>`;
+    label.style.background = color;
+    box.appendChild(label);
 
-    _ctx.restore();
+    overlay.appendChild(box);
   }
 
   // ================================================================
@@ -953,27 +943,24 @@
     const modal = document.getElementById('liveModal');
     modal.classList.add('open');
 
-    // Set src stream ke <img> tersembunyi
-    _streamImg.src = STREAM_URL;
+    // Set src stream ke <img> — browser langsung mulai streaming MJPEG
+    const img = document.getElementById('stream-img');
+    img.src = STREAM_URL;
+
     document.getElementById('stream-error').style.display = 'none';
-
-    // Mulai loop canvas
-    if (_canvasAnimId) cancelAnimationFrame(_canvasAnimId);
-    drawStreamLoop();
-
     updateModalOverlay();
+    renderBboxOverlay();
   }
 
   function closeLiveModal() {
     document.getElementById('liveModal').classList.remove('open');
 
-    // Hentikan loop canvas & bersihkan
-    if (_canvasAnimId) {
-      cancelAnimationFrame(_canvasAnimId);
-      _canvasAnimId = null;
-    }
-    _ctx.clearRect(0, 0, _canvas.width, _canvas.height);
-    _streamImg.src = '';
+    // Hentikan stream: hapus src supaya browser stop request
+    const img = document.getElementById('stream-img');
+    img.src = '';
+
+    // Bersihkan overlay
+    document.getElementById('bbox-overlay').innerHTML = '';
   }
 
   function closeLiveModalOutside(e) {
@@ -982,12 +969,10 @@
 
   function showStreamError() {
     document.getElementById('stream-error').style.display = 'flex';
-    _canvas.style.display = 'none';
   }
 
   function hideStreamError() {
     document.getElementById('stream-error').style.display = 'none';
-    _canvas.style.display = 'block';
   }
 
   function updateModalOverlay() {
