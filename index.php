@@ -306,7 +306,6 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                         <div class="sensor-value" id="val-lux">— <span class="sensor-unit">Lux</span></div>
                         <span class="badge badge-warning" id="badge-lux">Menunggu...</span>
                     </div>
-                </div>
 
                 <!-- INI DITAMBAH — masuk ke dalam sensor-row, sejajar pH & cahaya -->
                     <div class="sensor-card">
@@ -317,6 +316,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                         <span id="badge-warna">...</span>
                         <div id="status-warna-text">—</div>
                     </div>
+                 </div>
 
                 <!-- STATUS BAR -->
                 <div class="status-strip">
