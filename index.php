@@ -78,7 +78,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 /* ── LAYOUT ── */
 .main-content { display:grid; grid-template-columns:1fr 280px; gap:12px; flex:1; align-items:stretch; }
 .left-col { display:flex; flex-direction:column; gap:12px; flex:1; }
-.sensor-row { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.sensor-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
 
 /* ── SENSOR CARDS ── */
 .sensor-card { background:var(--white); border-radius:var(--radius-lg); padding:14px 16px; box-shadow:var(--shadow); border:1px solid var(--border); text-align:center; height:140px; }
@@ -93,12 +93,8 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .badge-normal  { background:#e6f5ee; color:#1a7a4c; }
 
 /* ── WARNA CARD ── */
-.warna-card-body { display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:2px; }
-.warna-box-wrap { position:relative; width:90%; }
-.warna-box { width:100%; height:28px; border-radius:6px; display:block; }
-.btn-live { position:absolute; right:4px; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.55); color:#fff; border:none; border-radius:5px; font-size:.58rem; font-weight:700; padding:2px 7px; cursor:pointer; display:flex; align-items:center; gap:4px; font-family:'Plus Jakarta Sans',sans-serif; }
-.btn-live:hover { background:rgba(220,20,20,.85); }
-.btn-live .live-dot { width:6px; height:6px; background:#ff4444; border-radius:50%; animation:pulse 1.2s infinite; }
+.warna-box { width:70%; height:18px; border-radius:6px; display:block; margin:0 auto; }
+
 
 /* ── CHART ── */
 .chart-panel { background:var(--white); border-radius:var(--radius-lg); padding:16px 18px; box-shadow:var(--shadow); border:1px solid var(--border); flex:1; display:flex; flex-direction:column; }
@@ -244,7 +240,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
 <div class="shell">
 
 <!-- ══ SIDEBAR ══ -->
-<aside class="sidebar" id="sidebar">
+<aside class="sidebar expanded" id="sidebar">
     <div class="sb-logo" onclick="toggleSidebar()">
         <div class="sb-icon-wrap">🌿</div>
         <div class="sb-texts">
@@ -312,24 +308,15 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                     </div>
                 </div>
 
-                <!-- WARNA AIR CARD (full width) -->
-                <div class="sensor-card" style="height:auto;padding:14px 16px 16px;">
-                    <div class="sensor-card-header" style="justify-content:flex-start;">
-                        <i class="fas fa-tint"></i><span>Warna Air Kolam</span>
-                    </div>
-                    <div class="warna-card-body" style="flex-direction:row;justify-content:space-between;align-items:center;gap:12px;margin-top:8px;">
-                        <div class="warna-box-wrap" style="flex:1;">
-                            <div class="warna-box" id="warna-box" style="background:#b0bec5;height:36px;"></div>
+                <!-- INI DITAMBAH — masuk ke dalam sensor-row, sejajar pH & cahaya -->
+                    <div class="sensor-card">
+                        <div class="sensor-card-header">
+                            <i class="fas fa-tint"></i><span>Warna Air Kolam</span>
                         </div>
-                        <div style="text-align:right;">
-                            <span class="badge badge-normal" id="badge-warna" style="font-size:.72rem;">Menunggu...</span>
-                            <div style="font-size:.65rem;color:var(--text-soft);font-weight:600;margin-top:4px;" id="status-warna-text">—</div>
-                        </div>
-                        <button class="btn-live" onclick="openLiveModal()">
-                            <span class="live-dot"></span> LIVE
-                        </button>
+                        <div id="warna-box" style="background:#b0bec5;"></div>
+                        <span id="badge-warna">...</span>
+                        <div id="status-warna-text">—</div>
                     </div>
-                </div>
 
                 <!-- STATUS BAR -->
                 <div class="status-strip">
