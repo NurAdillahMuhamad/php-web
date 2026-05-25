@@ -40,8 +40,8 @@ $sql = "SELECT
             ROUND(AVG(pH), 2)     AS pH,
             ROUND(AVG(cahaya))    AS cahaya,
             MAX(warna)            AS warna,
-            MAX(pompa_basa)       AS pompa_basa,
-            MAX(pompa_normal)     AS pompa_normal,
+            MAX(CASE WHEN pompa_basa   = 'DOSING' THEN 'ON' ELSE 'OFF' END) AS pompa_basa,
+            MAX(CASE WHEN pompa_normal = 'DOSING' THEN 'ON' ELSE 'OFF' END) AS pompa_normal,
             MAX(pompa_nutrisi)    AS pompa_nutrisi,
             MAX(uv)               AS uv
         FROM mikroalga_sensor
