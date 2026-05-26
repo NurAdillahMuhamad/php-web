@@ -431,8 +431,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
             <div class="filter-group">
                 <label>Sampai</label>
                 <input type="date" id="rekap-sampai">
-            </div>
-            <button class="btn-filter" onclick="loadRekap()">Tampilkan</button>
+            </div>  
             <div class="filter-group">
                 <label>Sub</label>
                 <select class="select-sub" id="select-sub">
@@ -441,6 +440,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                     <option value="3">Nutrisi</option>
                 </select>
             </div>
+            <button class="btn-filter" onclick="loadRekap()">Tampilkan</button>
             <div class="status-online-pill">
                 <span class="pulse-dot" style="width:7px;height:7px;"></span> Online
             </div>
