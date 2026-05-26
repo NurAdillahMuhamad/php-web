@@ -327,7 +327,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                         <div class="sensor-card-header">
                             <i class="fas fa-tint"></i><span>Warna Air Kolam</span>
                         </div>
-                        <div id="warna-box" style="background:#b0bec5;"></div>
+                        <div id="warna-box" class="warna-box" style="background:#b0bec5;"></div>
                         <span class="badge badge-normal" id="badge-warna" style="margin-top:8px;display:inline-block;">Menunggu...</span>
                     </div>
                  </div>
