@@ -112,6 +112,7 @@ if ($export) {
     header('Content-Disposition: attachment; filename="rekap_sub' . $sub . '_' . $tgl_awal . '_' . $tgl_akhir . '.csv"');
     $out = fopen('php://output', 'w');
     fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
+    fprintf($out, "sep=,\n");
 
     if ($sub === 1) {
     fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Normal', 'Vol Basa (mL)', 'Vol Normal (mL)']);
