@@ -191,25 +191,20 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .filter-group input[type=date] { border:1.5px solid var(--border); border-radius:8px; padding:6px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.78rem; font-weight:600; color:var(--text); outline:none; background:var(--bg); }
 .filter-group input[type=date]:focus { border-color:var(--green-light); }
 .btn-filter { background:var(--green-dark); color:#fff; border:none; padding:7px 16px; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.75rem; font-weight:700; cursor:pointer; }
-.btn-sub { 
-    background:#f0f5f2; 
-    color:var(--text); 
-    border:1.5px solid var(--border); 
-    padding:6px 14px; 
-    border-radius:8px; 
-    font-family:'Plus Jakarta Sans',sans-serif; 
-    font-size:.75rem; 
-    font-weight:700; 
-    cursor:pointer; 
-    transition:all .15s;
+.select-sub {
+    border:1.5px solid var(--border);
+    border-radius:8px;
+    padding:6px 10px;
+    font-family:'Plus Jakarta Sans',sans-serif;
+    font-size:.78rem;
+    font-weight:600;
+    color:var(--text);
+    background:var(--bg);
+    outline:none;
+    cursor:pointer;
 }
-.btn-sub.active { 
-    background:var(--green-dark); 
-    color:#fff; 
-    border-color:var(--green-dark); 
-}
-.btn-sub:hover:not(.active) { 
-    background:var(--border); 
+.select-sub:focus {
+    border-color:var(--green-light);
 }
 .status-online-pill { display:flex; align-items:center; gap:6px; background:#e6f5ee; border-radius:20px; padding:4px 12px; font-size:.68rem; font-weight:700; color:#1a7a4c; margin-left:auto; }
 
@@ -438,11 +433,13 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                 <input type="date" id="rekap-sampai">
             </div>
             <button class="btn-filter" onclick="loadRekap()">Tampilkan</button>
-            <div class="filter-group" style="margin-left:8px;">
+            <div class="filter-group">
                 <label>Sub</label>
-                <button class="btn-sub active" id="sub-btn-1" onclick="setSub(1)">Control pH</button>
-                <button class="btn-sub" id="sub-btn-2" onclick="setSub(2)">Control Cahaya</button>
-                <button class="btn-sub" id="sub-btn-3" onclick="setSub(3)">Nutrisi</button>
+                <select class="select-sub" id="select-sub">
+                    <option value="1">Control pH</option>
+                    <option value="2">Control Cahaya</option>
+                    <option value="3">Nutrisi</option>
+                </select>
             </div>
             <div class="status-online-pill">
                 <span class="pulse-dot" style="width:7px;height:7px;"></span> Online
@@ -813,11 +810,7 @@ function updateTheadRekap() {
 
 function setSub(n) {
     _currentSub = n;
-    [1,2,3].forEach(i => {
-        document.getElementById('sub-btn-' + i).classList.toggle('active', i === n);
-    });
     updateTheadRekap();
-    loadRekap();
 }
 
 function initRekap() {
@@ -832,6 +825,8 @@ function initRekap() {
 }
 
 function loadRekap() {
+    _currentSub = parseInt(document.getElementById('select-sub').value);
+    updateTheadRekap();
     const dari   = document.getElementById('rekap-dari').value;
     const sampai = document.getElementById('rekap-sampai').value;
     if (!dari || !sampai) return;
