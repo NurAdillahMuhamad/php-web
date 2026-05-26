@@ -93,7 +93,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .badge-normal  { background:#e6f5ee; color:#1a7a4c; }
 
 /* ── WARNA CARD ── */
-.warna-box { width:70%; height:35px; border-radius:6px; display:block; margin:0 auto; }
+.warna-box { width:70%; height:38px; border-radius:6px; display:block; margin:0 auto; }
 
 
 /* ── CHART ── */
