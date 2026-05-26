@@ -191,6 +191,26 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .filter-group input[type=date] { border:1.5px solid var(--border); border-radius:8px; padding:6px 10px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.78rem; font-weight:600; color:var(--text); outline:none; background:var(--bg); }
 .filter-group input[type=date]:focus { border-color:var(--green-light); }
 .btn-filter { background:var(--green-dark); color:#fff; border:none; padding:7px 16px; border-radius:8px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.75rem; font-weight:700; cursor:pointer; }
+.btn-sub { 
+    background:#f0f5f2; 
+    color:var(--text); 
+    border:1.5px solid var(--border); 
+    padding:6px 14px; 
+    border-radius:8px; 
+    font-family:'Plus Jakarta Sans',sans-serif; 
+    font-size:.75rem; 
+    font-weight:700; 
+    cursor:pointer; 
+    transition:all .15s;
+}
+.btn-sub.active { 
+    background:var(--green-dark); 
+    color:#fff; 
+    border-color:var(--green-dark); 
+}
+.btn-sub:hover:not(.active) { 
+    background:var(--border); 
+}
 .status-online-pill { display:flex; align-items:center; gap:6px; background:#e6f5ee; border-radius:20px; padding:4px 12px; font-size:.68rem; font-weight:700; color:#1a7a4c; margin-left:auto; }
 
 .rekap-table-wrap { background:var(--white); border-radius:var(--radius-lg); box-shadow:var(--shadow); border:1px solid var(--border); overflow:hidden; }
@@ -418,6 +438,12 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                 <input type="date" id="rekap-sampai">
             </div>
             <button class="btn-filter" onclick="loadRekap()">Tampilkan</button>
+            <div class="filter-group" style="margin-left:8px;">
+                <label>Sub</label>
+                <button class="btn-sub active" id="sub-btn-1" onclick="setSub(1)">Control pH</button>
+                <button class="btn-sub" id="sub-btn-2" onclick="setSub(2)">Control Cahaya</button>
+                <button class="btn-sub" id="sub-btn-3" onclick="setSub(3)">Nutrisi</button>
+            </div>
             <div class="status-online-pill">
                 <span class="pulse-dot" style="width:7px;height:7px;"></span> Online
             </div>
@@ -426,16 +452,15 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
         <div class="rekap-table-wrap">
             <div class="rekap-table-scroll">
                 <table class="rekap-table">
-                    <thead>
+                    <thead id="rekap-thead">
                         <tr>
                             <th>Tanggal</th>
                             <th>pH</th>
-                            <th>Cahaya (Lux)</th>
-                            <th>Warna Air</th>
+                            <th>Kondisi pH</th>
                             <th>Pompa Basa</th>
-                            <th>Pompa Air</th>
-                            <th>Nutrisi</th>
-                            <th>UV</th>
+                            <th>Pompa Normal</th>
+                            <th>Vol Basa</th>
+                            <th>Vol Normal</th>
                         </tr>
                     </thead>
                     <tbody id="rekap-tbody">
@@ -559,7 +584,7 @@ initChart('chartPH',     '#2d7dd2');
 initChart('chartCahaya', '#e67e22');
 
 function loadCharts(tanggal) {
-    fetch('api_sensor.php?tanggal=' + tanggal + '&t=' + Date.now())
+    fetch(`api_rekap.php?dari=${dari}&sampai=${sampai}&sub=${_currentSub}&t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             if (res.error || !res.data || !res.data.length) return;
@@ -774,8 +799,29 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveMod
 const ROWS_PER_PAGE = 7;
 let _rekapData  = [];
 let _rekapPage  = 1;
+let _currentSub = 1;
+    
+function updateTheadRekap() {
+    const heads = {
+        1: ['Tanggal','pH','Kondisi pH','Pompa Basa','Pompa Normal','Vol Basa','Vol Normal'],
+        2: ['Tanggal','Cahaya (Lux)','UV'],
+        3: ['Tanggal','pH','Warna Air','Pompa Nutrisi'],
+    };
+    document.getElementById('rekap-thead').innerHTML =
+        '<tr>' + heads[_currentSub].map(h => `<th>${h}</th>`).join('') + '</tr>';
+}
+
+function setSub(n) {
+    _currentSub = n;
+    [1,2,3].forEach(i => {
+        document.getElementById('sub-btn-' + i).classList.toggle('active', i === n);
+    });
+    updateTheadRekap();
+    loadRekap();
+}
 
 function initRekap() {
+    updateTheadRekap(); 
     const today = new Date().toISOString().split('T')[0];
     const tiga  = new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0];
     if (!document.getElementById('rekap-dari').value) {
@@ -840,23 +886,39 @@ function renderRekap() {
     }
 
     tbody.innerHTML = slice.map(r => {
+    const tgl = new Date(r.waktu);
+    const tglStr = tgl.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})
+                 + ',<br>' + tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+
+    if (_currentSub === 1) {
         const phClass = r.pH < 8.5 ? 'ph-rendah' : r.pH > 10.5 ? 'ph-tinggi' : 'ph-normal';
-        const faseDot = getFaseDot(r.warna);
-        const tgl     = new Date(r.waktu);
-        const tglStr  = tgl.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'})
-                      + ',<br>' + tgl.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+        const kondisiClass = r.kondisi_ph === 'Rendah' ? 'badge-danger' : r.kondisi_ph === 'Tinggi' ? 'badge-warning' : 'badge-normal';
         return `<tr>
             <td class="td-waktu">${tglStr}</td>
             <td class="td-ph ${phClass}">${r.pH}</td>
-            <td>${r.cahaya.toLocaleString('id-ID')} Lux</td>
-            <td><div class="td-fase"><span class="fase-dot ${faseDot}"></span>${r.warna !== 'tidak terdeteksi' ? r.warna : '—'}</div></td>
+            <td><span class="badge ${kondisiClass}">${r.kondisi_ph}</span></td>
             <td>${pillStatus(r.pompa_basa)}</td>
             <td>${pillStatus(r.pompa_normal)}</td>
-            <td>${pillStatus(r.pompa_nutrisi, true)}</td>
+            <td>${r.vol_basa > 0 ? r.vol_basa + ' mL' : '—'}</td>
+            <td>${r.vol_normal > 0 ? r.vol_normal + ' mL' : '—'}</td>
+        </tr>`;
+    } else if (_currentSub === 2) {
+        return `<tr>
+            <td class="td-waktu">${tglStr}</td>
+            <td>${r.cahaya.toLocaleString('id-ID')} Lux</td>
             <td>${pillStatus(r.uv, true)}</td>
         </tr>`;
-    }).join('');
-
+    } else {
+        const faseDot = getFaseDot(r.warna);
+        return `<tr>
+            <td class="td-waktu">${tglStr}</td>
+            <td class="td-ph">${r.pH}</td>
+            <td><div class="td-fase"><span class="fase-dot ${faseDot}"></span>${r.warna !== 'tidak terdeteksi' ? r.warna : '—'}</div></td>
+            <td>${pillStatus(r.pompa_nutrisi, true)}</td>
+        </tr>`;
+    }
+      }).join('');
+    
     document.getElementById('rekap-info').textContent =
         `Menampilkan ${start+1} hingga ${end} dari ${total} entri`;
 
@@ -895,7 +957,7 @@ function downloadCSV() {
     const dari   = document.getElementById('rekap-dari').value;
     const sampai = document.getElementById('rekap-sampai').value;
     if (!dari || !sampai) return alert('Pilih rentang tanggal terlebih dahulu');
-    window.location.href = `api_rekap.php?dari=${dari}&sampai=${sampai}&export=csv`;
+    window.location.href = `api_rekap.php?dari=${dari}&sampai=${sampai}&sub=${_currentSub}&export=csv`;
 }
 </script>
 </body>
