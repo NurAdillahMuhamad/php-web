@@ -114,23 +114,36 @@ if ($export) {
     fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
 
     if ($sub === 1) {
-        fputcsv($out, ['Tanggal', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Normal', 'Vol Basa (mL)', 'Vol Normal (mL)']);
-        foreach ($data as $r) {
-            fputcsv($out, [
-                $r['waktu'], $r['pH'], $r['kondisi_ph'],
-                $r['pompa_basa'], $r['pompa_normal'],
-                $r['vol_basa'], $r['vol_normal'],
-            ]);
+    fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Normal', 'Vol Basa (mL)', 'Vol Normal (mL)']);
+    foreach ($data as $r) {
+        $dt = new DateTime($r['waktu']);
+        fputcsv($out, [
+            $dt->format('d/m/Y'),
+            $dt->format('H:i'),
+            $r['pH'], $r['kondisi_ph'],
+            $r['pompa_basa'], $r['pompa_normal'],
+            $r['vol_basa'], $r['vol_normal'],
+        ]);
         }
     } elseif ($sub === 2) {
-        fputcsv($out, ['Tanggal', 'Cahaya (Lux)', 'UV']);
+        fputcsv($out, ['Tanggal', 'Jam', 'Cahaya (Lux)', 'UV']);
         foreach ($data as $r) {
-            fputcsv($out, [$r['waktu'], $r['cahaya'], $r['uv']]);
+            $dt = new DateTime($r['waktu']);
+            fputcsv($out, [
+                $dt->format('d/m/Y'),
+                $dt->format('H:i'),
+                $r['cahaya'], $r['uv']
+            ]);
         }
     } elseif ($sub === 3) {
-        fputcsv($out, ['Tanggal', 'pH', 'Warna Air', 'Pompa Nutrisi']);
+        fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Warna Air', 'Pompa Nutrisi']);
         foreach ($data as $r) {
-            fputcsv($out, [$r['waktu'], $r['pH'], $r['warna'], $r['pompa_nutrisi']]);
+            $dt = new DateTime($r['waktu']);
+            fputcsv($out, [
+                $dt->format('d/m/Y'),
+                $dt->format('H:i'),
+                $r['pH'], $r['warna'], $r['pompa_nutrisi']
+            ]);
         }
     }
 
