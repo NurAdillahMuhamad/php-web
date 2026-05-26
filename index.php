@@ -584,7 +584,7 @@ initChart('chartPH',     '#2d7dd2');
 initChart('chartCahaya', '#e67e22');
 
 function loadCharts(tanggal) {
-    fetch(`api_rekap.php?dari=${dari}&sampai=${sampai}&sub=${_currentSub}&t=${Date.now()}`)
+    fetch('api_sensor.php?tanggal=' + tanggal + '&t=' + Date.now())
         .then(r => r.json())
         .then(res => {
             if (res.error || !res.data || !res.data.length) return;
