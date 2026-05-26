@@ -6,6 +6,8 @@
 // 2. Tambah kondisi_ph (Rendah/Normal/Tinggi) dihitung di PHP
 // 3. Label waktu pakai MIN(waktu) bukan dibulatkan ke jam bulat
 // 4. Tambah vol_basa dan vol_normal
+// 5. CSV pakai delimiter ; dan sep=; untuk WPS/Excel
+// 6. Tanggal dan jam dipisah jadi 2 kolom di CSV
 // ================================================================
 
 header('Access-Control-Allow-Origin: *');
@@ -40,7 +42,6 @@ $tgl_awal  = mysqli_real_escape_string($konek, $tgl_awal);
 $tgl_akhir = mysqli_real_escape_string($konek, $tgl_akhir);
 
 // ── QUERY DATA PER JAM ───────────────────────────────────────────
-// Pakai MIN(waktu) untuk label jam pertama data masuk
 $sql = "SELECT
             MIN(waktu)                                          AS waktu_jam,
             ROUND(AVG(pH), 2)                                  AS pH,
@@ -71,7 +72,6 @@ $data = [];
 while ($row = mysqli_fetch_assoc($result)) {
     $ph = (float)($row['pH'] ?? 0);
 
-    // Hitung kondisi pH di PHP (Opsi A — tidak perlu kolom DB)
     if ($ph < 8.5) {
         $kondisi_ph = 'Rendah';
     } elseif ($ph > 10.5) {
@@ -111,40 +111,48 @@ if ($export) {
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="rekap_sub' . $sub . '_' . $tgl_awal . '_' . $tgl_akhir . '.csv"');
     $out = fopen('php://output', 'w');
+    // BOM untuk Excel/WPS
     fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
-    fprintf($out, "sep=,\n");
+    // Hint delimiter untuk WPS/Excel
+    fprintf($out, "sep=;\n");
 
     if ($sub === 1) {
-    fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Normal', 'Vol Basa (mL)', 'Vol Normal (mL)']);
-    foreach ($data as $r) {
-        $dt = new DateTime($r['waktu']);
-        fputcsv($out, [
-            $dt->format('d/m/Y'),
-            $dt->format('H:i'),
-            $r['pH'], $r['kondisi_ph'],
-            $r['pompa_basa'], $r['pompa_normal'],
-            $r['vol_basa'], $r['vol_normal'],
-        ]);
+        fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Normal', 'Vol Basa (mL)', 'Vol Normal (mL)'], ';');
+        foreach ($data as $r) {
+            $dt = new DateTime($r['waktu']);
+            fputcsv($out, [
+                $dt->format('d/m/Y'),
+                $dt->format('H:i'),
+                $r['pH'],
+                $r['kondisi_ph'],
+                $r['pompa_basa'],
+                $r['pompa_normal'],
+                $r['vol_basa'],
+                $r['vol_normal'],
+            ], ';');
         }
     } elseif ($sub === 2) {
-        fputcsv($out, ['Tanggal', 'Jam', 'Cahaya (Lux)', 'UV']);
+        fputcsv($out, ['Tanggal', 'Jam', 'Cahaya (Lux)', 'UV'], ';');
         foreach ($data as $r) {
             $dt = new DateTime($r['waktu']);
             fputcsv($out, [
                 $dt->format('d/m/Y'),
                 $dt->format('H:i'),
-                $r['cahaya'], $r['uv']
-            ]);
+                $r['cahaya'],
+                $r['uv'],
+            ], ';');
         }
     } elseif ($sub === 3) {
-        fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Warna Air', 'Pompa Nutrisi']);
+        fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Warna Air', 'Pompa Nutrisi'], ';');
         foreach ($data as $r) {
             $dt = new DateTime($r['waktu']);
             fputcsv($out, [
                 $dt->format('d/m/Y'),
                 $dt->format('H:i'),
-                $r['pH'], $r['warna'], $r['pompa_nutrisi']
-            ]);
+                $r['pH'],
+                $r['warna'],
+                $r['pompa_nutrisi'],
+            ], ';');
         }
     }
 
