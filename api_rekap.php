@@ -43,7 +43,7 @@ $tgl_akhir = mysqli_real_escape_string($konek, $tgl_akhir);
 
 // ── QUERY DATA PER JAM ───────────────────────────────────────────
 $sql = "SELECT
-            MIN(waktu)                                          AS waktu_jam,
+            DATE_FORMAT(MIN(waktu), '%Y-%m-%d %H:00:00')       AS waktu_jam,
             ROUND(AVG(pH), 2)                                  AS pH,
             ROUND(AVG(cahaya))                                 AS cahaya,
             MAX(warna)                                         AS warna,
