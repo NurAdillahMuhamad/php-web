@@ -687,7 +687,6 @@ function loadLatest() {
             _warnaData = { warna, status_warna: statusW, bbox: s.bbox || null };
             document.getElementById('warna-box').style.background = faseToBg(warna);
             document.getElementById('badge-warna').textContent    = warna !== 'tidak terdeteksi' ? warna : 'Belum terdeteksi';
-            document.getElementById('status-warna-text').textContent = statusW !== '-' ? statusW : '—';
             renderBboxOverlay();
             updateModalOverlay();
 
