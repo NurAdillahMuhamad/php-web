@@ -1242,6 +1242,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveMod
 // ══════════════════════════════════════════════════════════════════
 const ROWS_PER_PAGE = 7;
 let _rekapData  = [];
+let _rekapTotal = 0;
 let _rekapPage  = 1;
 let _currentSub = 1;
     
@@ -1290,8 +1291,9 @@ function loadRekap() {
                     Error: ${res.error}</td></tr>`;
                 return;
             }
-            _rekapData = res.data || [];
-            _rekapPage = 1;
+            _rekapData  = res.data || [];
+            _rekapTotal = res.total || 0;
+            _rekapPage  = 1;
             renderRekap();
 
             // Footer nutrisi terakhir
@@ -1313,7 +1315,7 @@ function loadRekap() {
 }
 
 function renderRekap() {
-    const total  = _rekapData.length;
+    const total = _rekapTotal;
     const start  = (_rekapPage - 1) * ROWS_PER_PAGE;
     const end    = Math.min(start + ROWS_PER_PAGE, total);
     const slice  = _rekapData.slice(start, end);
