@@ -71,7 +71,7 @@ $w = mysqli_fetch_assoc($q_warna);
 // ── DATA POMPA NUTRISI TERAKHIR AKTIF ────────────────────────────
 $q_nutrisi = mysqli_query($konek,
     "SELECT 
-        CONVERT_TZ(waktu, '+00:00', '+07:00') AS waktu_wib
+        DATE_ADD(waktu, INTERVAL 7 HOUR) AS waktu_wib
      FROM mikroalga_sensor
      WHERE pompa_nutrisi = 'ON'
      ORDER BY id DESC LIMIT 1"
