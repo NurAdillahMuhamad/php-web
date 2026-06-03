@@ -1,12 +1,7 @@
 <?php
 // ================================================================
 // cek_sensor.php — Data terbaru untuk dashboard (REVISED)
-// Perubahan:
-// 1. Koneksi DB pakai environment variable Railway
-// 2. Fix nama kolom: relay_basa/netral/uv → pompa_basa/normal/uv
-// 3. Fix threshold pH: 9.0 → 10.5
-// 4. Tambah pompa_nutrisi ke response
-// 5. Hapus persentase_warna
+// ★ UPDATED: Timezone WIB conversion dengan DATE_ADD
 // ================================================================
 
 header('Content-Type: application/json');
@@ -30,15 +25,16 @@ if (!$konek) {
 }
 
 // ── DATA SENSOR TERBARU ──────────────────────────────────────────
+// ★ UPDATE: Pakai DATE_ADD untuk timezone (CONVERT_TZ tidak support di Railway)
 $q_sensor = mysqli_query($konek,
     "SELECT 
-        id, 
-        pH, 
-        cahaya, 
+        id,
+        pH,
+        cahaya,
         DATE_ADD(waktu, INTERVAL 7 HOUR) AS waktu_wib,
-        pompa_basa, 
-        pompa_normal, 
-        pompa_nutrisi, 
+        pompa_basa,
+        pompa_normal,
+        pompa_nutrisi,
         uv,
         vol_basa,
         vol_normal,
@@ -50,12 +46,11 @@ $q_sensor = mysqli_query($konek,
 );
 $d = mysqli_fetch_assoc($q_sensor);
 
-// ★ RENAME waktu ke waktu_wib untuk response
+// ── RENAME waktu ke waktu_wib ──────────────────────────────────
 if ($d) {
     $d['waktu'] = $d['waktu_wib'];
     unset($d['waktu_wib']);
 }
-$d = mysqli_fetch_assoc($q_sensor);
 
 // ── DATA WARNA TERBARU (pisah query untuk robustness) ────────────
 $q_warna = mysqli_query($konek,
@@ -69,9 +64,9 @@ $q_warna = mysqli_query($konek,
 $w = mysqli_fetch_assoc($q_warna);
 
 // ── DATA POMPA NUTRISI TERAKHIR AKTIF ────────────────────────────
+// ★ UPDATE: Juga pakai DATE_ADD untuk WIB
 $q_nutrisi = mysqli_query($konek,
-    "SELECT 
-        DATE_ADD(waktu, INTERVAL 7 HOUR) AS waktu_wib
+    "SELECT DATE_ADD(waktu, INTERVAL 7 HOUR) AS waktu_wib 
      FROM mikroalga_sensor
      WHERE pompa_nutrisi = 'ON'
      ORDER BY id DESC LIMIT 1"
@@ -82,21 +77,21 @@ $nutrisi_terakhir  = $nutrisi_row['waktu_wib'] ?? null;
 // ── HITUNG MENIT SEJAK UPDATE TERAKHIR ──────────────────────────
 $menit_lalu = null;
 if ($d && isset($d['waktu'])) {
-    // ★ Hitung dari waktu database (UTC), tapi time() juga UTC
-    // Jadi calculation tetap akurat
+    // Hitung dari waktu database yang sudah dikonversi WIB
+    // Tapi time() tetap UTC, jadi tetap akurat
     $menit_lalu = round((time() - strtotime($d['waktu'])) / 60);
 }
 
-// ── STATUS pH (FIX: threshold 10.5, bukan 9.0) ──────────────────
+// ── STATUS pH ──────────────────────────────────────────────────
 $ph        = (float)($d['pH'] ?? $d['ph'] ?? 0);
 $ph_status = 'normal';
 if ($ph < 8.5) {
     $ph_status = 'rendah';
-} elseif ($ph > 10.5) {   // FIX: sebelumnya 9.0
+} elseif ($ph > 10.5) {
     $ph_status = 'tinggi';
 }
 
-// ── STATUS LUX ───────────────────────────────────────────────────
+// ── STATUS LUX ─────────────────────────────────────────────────
 $lux        = (float)($d['cahaya'] ?? 0);
 $lux_status = 'normal';
 if ($lux <= 0) {
@@ -107,42 +102,29 @@ if ($lux <= 0) {
     $lux_status = 'terlalu terang';
 }
 
-// ── STATUS POMPA (FIX: pakai nama kolom yang benar di DB) ────────
-// Sebelumnya: $d['relay_basa'], $d['relay_netral'], $d['relay_uv'] → tidak ada
-// Sekarang:   $d['pompa_basa'], $d['pompa_normal'], $d['uv'] → benar
+// ── STATUS POMPA ──────────────────────────────────────────────
 $pompa_basa    = $d['pompa_basa']    ?? 'IDLE';
 $pompa_normal  = $d['pompa_normal']  ?? 'IDLE';
 $pompa_nutrisi = $d['pompa_nutrisi'] ?? 'OFF';
 $uv            = $d['uv']            ?? 'OFF';
 
-// ── RESPONSE JSON ────────────────────────────────────────────────
+// ── RESPONSE JSON ──────────────────────────────────────────────
 $response = [
-    // SENSOR
     'pH'            => round($ph, 2),
     'cahaya'        => round($lux),
     'waktu'         => $d['waktu']     ?? null,
     'menit_lalu'    => $menit_lalu,
-
-    // STATUS SENSOR
     'pH_status'     => $ph_status,
     'lux_status'    => $lux_status,
-
-    // WARNA AIR
     'warna'         => $w['warna']        ?? 'tidak terdeteksi',
     'status_warna'  => $w['status_warna'] ?? '-',
-
-    // STATUS AKTUATOR (FIX: nama kolom benar)
     'pompa_basa'    => $pompa_basa,
     'pompa_normal'  => $pompa_normal,
     'pompa_nutrisi' => $pompa_nutrisi,
     'uv'            => $uv,
-
-    // VOLUME (untuk info tambahan)
     'vol_basa'      => (float)($d['vol_basa']    ?? 0),
     'vol_normal'    => (float)($d['vol_normal']   ?? 0),
     'vol_nutrisi'   => (float)($d['vol_nutrisi']  ?? 0),
-
-    // NUTRISI TERAKHIR
     'nutrisi_terakhir' => $nutrisi_terakhir,
 ];
 
