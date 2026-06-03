@@ -522,7 +522,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
             </div>
         </div>
 
-        <div class="rekap-footer">
+        <!-- <div class="rekap-footer">
             <div class="rekap-footer-item">
                 <i class="fas fa-calendar-check"></i>
                 <div>
@@ -538,7 +538,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                     <div class="value">3 Menit (Testing)</div>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </div><!-- /page-rekap -->
 
