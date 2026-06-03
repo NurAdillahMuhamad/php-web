@@ -1282,7 +1282,7 @@ function loadRekap() {
         <i class="fas fa-spinner fa-spin"></i> Memuat data...
     </td></tr>`;
 
-    fetch(`api_rekap.php?dari=${dari}&sampai=${sampai}&t=${Date.now()}`)
+    fetch(`api_rekap.php?dari=${dari}&sampai=${sampai}&sub=${_currentSub}&t=${Date.now()}`)
         .then(r => r.json())
         .then(res => {
             if (res.error) {
