@@ -245,6 +245,54 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
 .rekap-footer-item .value { font-size:.85rem; font-weight:800; color:var(--text); }
 .rekap-footer-item .sub { font-size:.65rem; color:var(--text-soft); font-weight:500; }
 
+/* ── GALLERY PAGE ─────────────────────────────────────────── */
+.gallery-header-bar{background:var(--green-dark);color:#fff;padding:14px 22px;border-radius:var(--radius-lg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.gallery-header-bar h2{font-size:1rem;font-weight:800;letter-spacing:-.2px}
+.gallery-header-bar p{font-size:.68rem;opacity:.75;font-weight:500;margin-top:2px;font-style:italic}
+
+.gallery-filter-bar{background:var(--white);border-radius:var(--radius-md);padding:14px 18px;box-shadow:var(--shadow);border:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+
+.foto-card{background:var(--white);border-radius:var(--radius-md);border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative}
+.foto-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.foto-card-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:#e8f0ec}
+.foto-card-img-placeholder{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;background:#f0f5f2;color:var(--text-soft);font-size:2rem}
+.foto-card-body{padding:8px 10px}
+.foto-card-fase{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:800;margin-bottom:4px}
+.foto-card-time{font-size:.65rem;color:var(--text-soft);font-weight:600}
+.foto-card-skor{font-size:.6rem;color:var(--text-soft);margin-top:2px}
+
+.fase-pembibitan  {background:#FFF9E6;color:#8B6914}
+.fase-pertumbuhan {background:#C8E6C9;color:#1B5E20}
+.fase-optimal     {background:#A5D6A7;color:#1B5E20}
+.fase-panen       {background:#BBDEFB;color:#0D47A1}
+.fase-unknown     {background:#EEEEEE;color:#616161}
+
+.gallery-empty{grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--text-soft)}
+.gallery-empty i{font-size:2.5rem;margin-bottom:12px;display:block}
+.gallery-empty p{font-size:.85rem;font-weight:600}
+
+.gallery-pagination{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:.72rem;font-weight:600;color:var(--text-soft)}
+
+.lightbox-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.lightbox-overlay.open{display:flex}
+.lightbox-img-wrap{position:relative;max-width:min(800px,92vw);max-height:70vh;border-radius:12px;overflow:hidden;background:#000}
+.lightbox-img-wrap img{max-width:100%;max-height:70vh;object-fit:contain;display:block}
+.lightbox-close{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.6);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center}
+.lightbox-info{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.lightbox-fase-badge{padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:800}
+.lightbox-meta{color:rgba(255,255,255,.6);font-size:.72rem;font-weight:600}
+.lightbox-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.5);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center}
+.lightbox-nav.prev{left:-48px}
+.lightbox-nav.next{right:-48px}
+.lightbox-btn-drive{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:6px 14px;border-radius:8px;font-size:.72rem;font-weight:700;text-decoration:none;cursor:pointer}
+.lightbox-btn-drive:hover{background:rgba(255,255,255,.25)}
+
+.gallery-live-dot{display:inline-block;width:7px;height:7px;background:#2ecc71;border-radius:50%;animation:pulse 1.8s infinite;margin-right:4px}
+
+@media(max-width:600px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+
 /* ── RESPONSIVE ── */
 @media (max-width:950px) { .main-content{grid-template-columns:1fr;} .charts-row{grid-template-columns:1fr;} }
 @media (max-width:600px) { .sensor-row{grid-template-columns:1fr;} .sidebar{width:0;min-width:0;} .sidebar.expanded{width:var(--sidebar-w);min-width:var(--sidebar-w);} }
@@ -271,6 +319,10 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
         <a class="sidebar-item" id="nav-rekap" onclick="showPage('rekap')">
             <i class="fas fa-table"></i>
             <span class="nav-lbl">Rekapitulasi</span>
+        </a>
+        <a class="sidebar-item" id="nav-gallery" onclick="showPage('gallery')">
+        <i class="fas fa-images"></i>
+        <span class="nav-lbl">Galeri Foto</span>
         </a>
         <a class="sidebar-item" href="logout.php">
             <i class="fas fa-sign-out-alt"></i>
