@@ -12,6 +12,9 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+// ── SET TIMEZONE KE WIB ─────────────────────────────────────────
+date_default_timezone_set('Asia/Jakarta');
+
 // ── KONEKSI DATABASE (Railway env variable) ──────────────────────
 $db_host = getenv('MYSQLHOST')     ?: 'localhost';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
@@ -28,8 +31,30 @@ if (!$konek) {
 
 // ── DATA SENSOR TERBARU ──────────────────────────────────────────
 $q_sensor = mysqli_query($konek,
-    "SELECT * FROM mikroalga_sensor ORDER BY id DESC LIMIT 1"
+    "SELECT 
+        id, 
+        pH, 
+        cahaya, 
+        CONVERT_TZ(waktu, '+00:00', '+07:00') AS waktu_wib,
+        pompa_basa, 
+        pompa_normal, 
+        pompa_nutrisi, 
+        uv,
+        vol_basa,
+        vol_normal,
+        vol_nutrisi,
+        warna,
+        status_warna
+     FROM mikroalga_sensor 
+     ORDER BY id DESC LIMIT 1"
 );
+$d = mysqli_fetch_assoc($q_sensor);
+
+// ★ RENAME waktu ke waktu_wib untuk response
+if ($d) {
+    $d['waktu'] = $d['waktu_wib'];
+    unset($d['waktu_wib']);
+}
 $d = mysqli_fetch_assoc($q_sensor);
 
 // ── DATA WARNA TERBARU (pisah query untuk robustness) ────────────
@@ -45,16 +70,20 @@ $w = mysqli_fetch_assoc($q_warna);
 
 // ── DATA POMPA NUTRISI TERAKHIR AKTIF ────────────────────────────
 $q_nutrisi = mysqli_query($konek,
-    "SELECT waktu FROM mikroalga_sensor
+    "SELECT 
+        CONVERT_TZ(waktu, '+00:00', '+07:00') AS waktu_wib
+     FROM mikroalga_sensor
      WHERE pompa_nutrisi = 'ON'
      ORDER BY id DESC LIMIT 1"
 );
 $nutrisi_row       = mysqli_fetch_assoc($q_nutrisi);
-$nutrisi_terakhir  = $nutrisi_row['waktu'] ?? null;
+$nutrisi_terakhir  = $nutrisi_row['waktu_wib'] ?? null;
 
 // ── HITUNG MENIT SEJAK UPDATE TERAKHIR ──────────────────────────
 $menit_lalu = null;
 if ($d && isset($d['waktu'])) {
+    // ★ Hitung dari waktu database (UTC), tapi time() juga UTC
+    // Jadi calculation tetap akurat
     $menit_lalu = round((time() - strtotime($d['waktu'])) / 60);
 }
 
