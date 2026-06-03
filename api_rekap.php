@@ -112,7 +112,7 @@ if ($export) {
     fprintf($out, "sep=;\n");
 
     if ($sub === 1) {
-        fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Normal', 'Vol Basa (mL)', 'Vol Normal (mL)'], ';');
+        fputcsv($out, ['Tanggal', 'Jam', 'pH', 'Kondisi pH', 'Pompa Basa', 'Pompa Asam', 'Vol Basa (mL)', 'Vol Normal (mL)'], ';');
         foreach ($data as $r) {
             $dt = new DateTime($r['waktu']);
             fputcsv($out, [
