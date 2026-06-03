@@ -784,7 +784,7 @@ function loadGallery(page) {
         <i class="fas fa-spinner fa-spin"></i> Memuat foto...
     </div>`;
 
-    fetch(`api_gallery.php?dari=${dari}&sampai=${sampai}&page=${page}&per_page=${GALLERY_PER_PAGE}&t=${Date.now()}`)
+    fetch('api_rekap.php?dari=2026-06-01&sampai=2026-06-03&sub=1').then(r=>r.text()).then(d=>console.log(d))
         .then(r => r.json())
         .then(res => {
             if (res.error) {
