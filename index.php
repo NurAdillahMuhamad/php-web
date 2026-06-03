@@ -1262,13 +1262,12 @@ function setSub(n) {
 }
 
 function initRekap() {
-    updateTheadRekap(); 
+    updateTheadRekap();
     const today = new Date().toISOString().split('T')[0];
     const tiga  = new Date(Date.now() - 2 * 86400000).toISOString().split('T')[0];
-    if (!document.getElementById('rekap-dari').value) {
-        document.getElementById('rekap-dari').value   = tiga;
-        document.getElementById('rekap-sampai').value = today;
-    }
+    // Force set nilai tanggal setiap kali halaman dibuka
+    document.getElementById('rekap-dari').value   = tiga;
+    document.getElementById('rekap-sampai').value = today;
     loadRekap();
 }
 
