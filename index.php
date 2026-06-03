@@ -424,8 +424,8 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                         <label class="toggle"><input type="checkbox" id="togBasa" disabled><span class="toggle-slider green"></span></label>
                     </div>
                     <div class="control-item">
-                        <div class="control-left"><i class="fas fa-water"></i><span>Pompa Air Netral</span></div>
-                        <label class="toggle"><input type="checkbox" id="togNormal" disabled><span class="toggle-slider green"></span></label>
+                    <div class="control-left"><i class="fas fa-water"></i><span>Pompa Asam</span></div>
+                    <label class="toggle"><input type="checkbox" id="togNormal" disabled><span class="toggle-slider"></span></label>
                     </div>
                     <div class="control-item">
                         <div class="control-left"><i class="fas fa-leaf"></i><span>Pompa Nutrisi</span></div>
@@ -506,7 +506,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                             <th>pH</th>
                             <th>Kondisi pH</th>
                             <th>Pompa Basa</th>
-                            <th>Pompa Normal</th>
+                            <th>Pompa Asam</th>
                             <th>Vol Basa</th>
                             <th>Vol Normal</th>
                         </tr>
