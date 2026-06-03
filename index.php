@@ -542,6 +542,122 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
 
     </div><!-- /page-rekap -->
 
+    <div class="page" id="page-gallery">
+
+        <div class="rekap-header-bar">
+            <div>
+                <h2>GALERI FOTO KOLAM MIKROALGA <em>SPIRULINA SP.</em></h2>
+                <p>Foto diambil setiap 20 detik · Filter berdasarkan rentang tanggal</p>
+            </div>
+        </div>
+
+        <div class="rekap-filter-bar">
+            <div class="filter-group">
+                <i class="fas fa-calendar" style="color:var(--green-dark);"></i>
+                <span style="font-size:.75rem;font-weight:700;color:var(--text);">Kolam 1</span>
+            </div>
+            <div class="filter-group">
+                <label>Dari</label>
+                <input type="date" id="gallery-dari">
+            </div>
+            <div class="filter-group">
+                <label>Sampai</label>
+                <input type="date" id="gallery-sampai">
+            </div>
+            <button class="btn-filter" onclick="loadGallery(1)">Tampilkan</button>
+            <div class="status-online-pill">
+                <span class="pulse-dot" style="width:7px;height:7px;"></span> Online
+            </div>
+        </div>
+
+        <!-- STATS ROW -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div class="control-box" style="text-align:center;">
+                <div style="font-size:.68rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;">Total Foto</div>
+                <div style="font-size:1.4rem;font-weight:800;color:var(--green-dark);" id="gallery-total-foto">—</div>
+                <div style="font-size:.65rem;color:var(--text-soft);margin-top:2px;">dalam rentang tanggal</div>
+            </div>
+            <div class="control-box" style="text-align:center;">
+                <div style="font-size:.68rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;">Fase Terbaru</div>
+                <div style="font-size:.9rem;font-weight:800;color:var(--green-dark);" id="gallery-fase-terbaru">—</div>
+                <div style="font-size:.65rem;color:var(--text-soft);margin-top:2px;">terdeteksi</div>
+            </div>
+            <div class="control-box" style="text-align:center;">
+                <div style="font-size:.68rem;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;">Halaman</div>
+                <div style="font-size:1.4rem;font-weight:800;color:var(--green-dark);" id="gallery-page-info">—</div>
+                <div style="font-size:.65rem;color:var(--text-soft);margin-top:2px;">dari total halaman</div>
+            </div>
+        </div>
+
+        <!-- GRID FOTO -->
+        <div class="rekap-table-wrap">
+            <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:.71rem;font-weight:800;text-transform:uppercase;color:var(--green-dark);letter-spacing:.5px;">
+                    📷 Foto Kolam
+                </span>
+                <span style="font-size:.68rem;color:var(--text-soft);font-weight:600;" id="gallery-last-refresh">—</span>
+            </div>
+
+            <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);">
+                <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--text-soft);background:var(--white);">
+                    Pilih rentang tanggal lalu klik Tampilkan
+                </div>
+            </div>
+
+            <div class="rekap-pagination">
+                <span id="gallery-info">Menampilkan 0 foto</span>
+                <div class="pagination-btns" id="gallery-pages"></div>
+            </div>
+        </div>
+
+    </div><!-- /page-gallery -->
+
+<!-- ── LIGHTBOX OVERLAY ─────────────────────────────────────── -->
+<div class="modal-overlay" id="lightboxModal" onclick="closeLightboxOutside(event)">
+    <div class="modal-box" style="max-width:min(800px,96vw);">
+        <div class="modal-header">
+            <div class="modal-header-left">
+                <span class="modal-title" id="lightbox-title">—</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+                <a id="lightbox-gdrive-link" href="#" target="_blank"
+                   style="color:rgba(255,255,255,.6);font-size:.7rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:4px;">
+                    <i class="fas fa-external-link-alt"></i> Buka di Drive
+                </a>
+                <button class="modal-close" onclick="closeLightbox()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        <div class="modal-stream" style="background:#111;">
+            <img id="lightbox-img" src="" alt="Foto Kolam"
+                 style="width:100%;height:100%;object-fit:contain;display:block;">
+            <div class="stream-error" id="lightbox-error">
+                <i class="fas fa-image"></i>
+                <span>Foto tidak tersedia</span>
+                <small>Mungkin akses Google Drive terbatas</small>
+            </div>
+        </div>
+        <div class="modal-overlay-info">
+            <div class="fase-info">
+                <span class="fase-badge none" id="lightbox-fase-badge">—</span>
+                <span style="color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;" id="lightbox-skor">—</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button onclick="lightboxNav(-1)"
+                        style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <span style="color:rgba(255,255,255,.4);font-size:.65rem;font-weight:600;" id="lightbox-nav-info">—</span>
+                <button onclick="lightboxNav(1)"
+                        style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.9rem;">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 </div><!-- /main-area -->
 </div><!-- /shell -->
 
@@ -586,6 +702,286 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
 // ── CONFIG ────────────────────────────────────────────────────────
 const STREAM_URL  = 'http://192.168.0.150:81/stream';
 const RAILWAY_URL = 'https://worker-production-c170.up.railway.app/hasil_warna';
+const GALLERY_PER_PAGE   = 12;
+const GALLERY_REFRESH_MS = 60000;
+
+let _galleryPage     = 1;
+let _galleryData     = [];
+let _galleryTotal    = 0;
+let _galleryTotalPages = 0;
+let _galleryRefreshTimer = null;
+let _lightboxIndex   = 0;
+
+// ── FASE HELPER ───────────────────────────────────────────────────
+function getFaseClass(warna) {
+    if (!warna) return 'none';
+    const w = warna.toLowerCase();
+    if (w.includes('pembibitan') || w.includes('fase 1')) return 'fase1';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return 'fase2';
+    if (w.includes('optimal')    || w.includes('fase 3')) return 'fase3';
+    if (w.includes('panen')      || w.includes('fase 4')) return 'fase4';
+    return 'none';
+}
+
+function getFaseBg(warna) {
+    if (!warna) return '#EEEEEE';
+    const w = warna.toLowerCase();
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#FFF9E6';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#C8E6C9';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#A5D6A7';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#BBDEFB';
+    return '#EEEEEE';
+}
+
+function getFaseColor(warna) {
+    if (!warna) return '#616161';
+    const w = warna.toLowerCase();
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#8B6914';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#1B5E20';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#1B5E20';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#0D47A1';
+    return '#616161';
+}
+
+function getFaseDotColor(warna) {
+    if (!warna) return '#BDBDBD';
+    const w = warna.toLowerCase();
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#F9C74F';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#66BB6A';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#43A047';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#1E88E5';
+    return '#BDBDBD';
+}
+
+// ── INIT GALLERY ──────────────────────────────────────────────────
+function initGallery() {
+    const today = new Date().toISOString().split('T')[0];
+    if (!document.getElementById('gallery-dari').value) {
+        document.getElementById('gallery-dari').value  = today;
+        document.getElementById('gallery-sampai').value = today;
+    }
+    loadGallery(1);
+
+    // Auto-refresh setiap 60 detik saat halaman gallery aktif
+    if (_galleryRefreshTimer) clearInterval(_galleryRefreshTimer);
+    _galleryRefreshTimer = setInterval(() => {
+        const galleryPage = document.getElementById('page-gallery');
+        if (galleryPage && galleryPage.classList.contains('active')) {
+            loadGallery(_galleryPage);
+        }
+    }, GALLERY_REFRESH_MS);
+}
+
+// ── LOAD GALLERY ─────────────────────────────────────────────────
+function loadGallery(page) {
+    const dari   = document.getElementById('gallery-dari').value;
+    const sampai = document.getElementById('gallery-sampai').value;
+    if (!dari || !sampai) return;
+
+    _galleryPage = page;
+    const grid   = document.getElementById('gallery-grid');
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--text-soft);background:var(--white);">
+        <i class="fas fa-spinner fa-spin"></i> Memuat foto...
+    </div>`;
+
+    fetch(`api_gallery.php?dari=${dari}&sampai=${sampai}&page=${page}&per_page=${GALLERY_PER_PAGE}&t=${Date.now()}`)
+        .then(r => r.json())
+        .then(res => {
+            if (res.error) {
+                grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--red);background:var(--white);">
+                    Error: ${res.error}
+                </div>`;
+                return;
+            }
+
+            _galleryData       = res.fotos || [];
+            _galleryTotal      = res.total || 0;
+            _galleryTotalPages = res.total_pages || 0;
+
+            // Update stats
+            document.getElementById('gallery-total-foto').textContent  = _galleryTotal.toLocaleString('id-ID');
+            document.getElementById('gallery-fase-terbaru').textContent = res.fase_terbaru || '—';
+            document.getElementById('gallery-page-info').textContent   = `${page} / ${_galleryTotalPages || 1}`;
+            document.getElementById('gallery-last-refresh').textContent = 'Diperbarui: ' + new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+
+            renderGalleryGrid();
+            renderGalleryPagination();
+        })
+        .catch(() => {
+            grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--red);background:var(--white);">
+                Gagal memuat data
+            </div>`;
+        });
+}
+
+// ── RENDER GRID ───────────────────────────────────────────────────
+function renderGalleryGrid() {
+    const grid = document.getElementById('gallery-grid');
+
+    if (!_galleryData.length) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-soft);background:var(--white);">
+            Tidak ada foto untuk rentang tanggal ini
+        </div>`;
+        document.getElementById('gallery-info').textContent = 'Tidak ada foto';
+        document.getElementById('gallery-pages').innerHTML  = '';
+        return;
+    }
+
+    const start = (_galleryPage - 1) * GALLERY_PER_PAGE + 1;
+    const end   = Math.min(_galleryPage * GALLERY_PER_PAGE, _galleryTotal);
+    document.getElementById('gallery-info').textContent = `Menampilkan ${start} hingga ${end} dari ${_galleryTotal} foto`;
+
+    grid.innerHTML = _galleryData.map((foto, idx) => {
+        const warna     = foto.warna || 'tidak terdeteksi';
+        const bg        = getFaseBg(warna);
+        const color     = getFaseColor(warna);
+        const dotColor  = getFaseDotColor(warna);
+        const faseClass = getFaseClass(warna);
+        const thumbUrl  = foto.thumb_url || '';
+        const waktu     = foto.waktu ? foto.waktu.slice(11, 16) + ' WIB' : '—';
+        const tgl       = foto.waktu ? (() => {
+            const d = new Date(foto.waktu);
+            return d.toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+        })() : '—';
+
+        return `<div onclick="openLightbox(${idx})"
+            style="background:var(--white);cursor:pointer;position:relative;overflow:hidden;aspect-ratio:4/3;display:flex;flex-direction:column;">
+            <div style="flex:1;overflow:hidden;position:relative;">
+                ${thumbUrl
+                    ? `<img src="${thumbUrl}" alt="Foto kolam"
+                           style="width:100%;height:100%;object-fit:cover;display:block;"
+                           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                       <div style="display:none;width:100%;height:100%;background:${bg};align-items:center;justify-content:center;flex-direction:column;gap:4px;">
+                           <i class="fas fa-image" style="font-size:1.5rem;color:${color};opacity:.4;"></i>
+                           <span style="font-size:.58rem;color:${color};opacity:.6;font-weight:600;">foto tidak tersedia</span>
+                       </div>`
+                    : `<div style="width:100%;height:100%;background:${bg};display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;">
+                           <i class="fas fa-image" style="font-size:1.5rem;color:${color};opacity:.4;"></i>
+                           <span style="font-size:.58rem;color:${color};opacity:.6;font-weight:600;">belum ada foto</span>
+                       </div>`
+                }
+                <div style="position:absolute;inset:0;background:rgba(10,92,71,.7);opacity:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:opacity .2s;"
+                     onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0">
+                    <i class="fas fa-search-plus" style="font-size:1.2rem;color:#fff;"></i>
+                    <span style="background:rgba(255,255,255,.2);color:#fff;padding:2px 8px;border-radius:20px;font-size:.6rem;font-weight:700;">${warna !== 'tidak terdeteksi' ? warna : '—'}</span>
+                </div>
+            </div>
+            <div style="padding:5px 8px;border-top:1px solid var(--border);">
+                <div style="font-size:.6rem;color:var(--text-soft);font-weight:600;">${tgl} · ${waktu}</div>
+                <div style="font-size:.62rem;font-weight:700;color:${color};display:flex;align-items:center;gap:4px;margin-top:2px;">
+                    <span style="width:6px;height:6px;background:${dotColor};border-radius:50%;display:inline-block;flex-shrink:0;"></span>
+                    ${warna !== 'tidak terdeteksi' ? warna : '—'}
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ── RENDER PAGINATION ─────────────────────────────────────────────
+function renderGalleryPagination() {
+    const pagesEl    = document.getElementById('gallery-pages');
+    const totalPages = _galleryTotalPages;
+    if (!totalPages || totalPages <= 1) { pagesEl.innerHTML = ''; return; }
+
+    let btns  = '';
+    const cur = _galleryPage;
+
+    // Selalu tampilkan halaman pertama
+    btns += `<button class="page-btn ${cur === 1 ? 'active' : ''}" onclick="loadGallery(1)">1</button>`;
+
+    if (cur > 3) btns += `<button class="page-btn" disabled>...</button>`;
+
+    for (let i = Math.max(2, cur - 1); i <= Math.min(totalPages - 1, cur + 1); i++) {
+        btns += `<button class="page-btn ${i === cur ? 'active' : ''}" onclick="loadGallery(${i})">${i}</button>`;
+    }
+
+    if (cur < totalPages - 2) btns += `<button class="page-btn" disabled>...</button>`;
+
+    if (totalPages > 1) {
+        btns += `<button class="page-btn ${cur === totalPages ? 'active' : ''}" onclick="loadGallery(${totalPages})">${totalPages}</button>`;
+    }
+
+    pagesEl.innerHTML = btns;
+}
+
+// ── LIGHTBOX ──────────────────────────────────────────────────────
+function openLightbox(idx) {
+    _lightboxIndex = idx;
+    showLightboxPhoto(idx);
+    document.getElementById('lightboxModal').classList.add('open');
+}
+
+function showLightboxPhoto(idx) {
+    const foto = _galleryData[idx];
+    if (!foto) return;
+
+    const img   = document.getElementById('lightbox-img');
+    const err   = document.getElementById('lightbox-error');
+    const warna = foto.warna || 'tidak terdeteksi';
+    const waktu = foto.waktu ? new Date(foto.waktu).toLocaleString('id-ID', {
+        day:'numeric', month:'long', year:'numeric',
+        hour:'2-digit', minute:'2-digit'
+    }) + ' WIB' : '—';
+
+    // Reset error state
+    img.style.display = 'block';
+    err.style.display = 'none';
+
+    // Set gambar
+    if (foto.thumb_url) {
+        // Gunakan ukuran lebih besar untuk lightbox
+        const fullUrl = foto.gdrive_file_id
+            ? `https://drive.google.com/thumbnail?id=${foto.gdrive_file_id}&sz=w1200`
+            : foto.thumb_url;
+        img.src = fullUrl;
+        img.onerror = () => { img.style.display = 'none'; err.style.display = 'flex'; };
+        img.onload  = () => { img.style.display = 'block'; err.style.display = 'none'; };
+    } else {
+        img.style.display = 'none';
+        err.style.display = 'flex';
+    }
+
+    // Update info
+    document.getElementById('lightbox-title').textContent = waktu;
+    document.getElementById('lightbox-skor').textContent  = `Skor: ${foto.skor}`;
+    document.getElementById('lightbox-nav-info').textContent = `${idx + 1} / ${_galleryData.length}`;
+
+    const badge = document.getElementById('lightbox-fase-badge');
+    badge.textContent = warna !== 'tidak terdeteksi' ? warna : 'Tidak terdeteksi';
+    badge.className   = 'fase-badge ' + getFaseClass(warna);
+
+    const link = document.getElementById('lightbox-gdrive-link');
+    if (foto.view_url) {
+        link.href  = foto.view_url;
+        link.style.display = 'flex';
+    } else {
+        link.style.display = 'none';
+    }
+}
+
+function lightboxNav(dir) {
+    const newIdx = _lightboxIndex + dir;
+    if (newIdx < 0 || newIdx >= _galleryData.length) return;
+    _lightboxIndex = newIdx;
+    showLightboxPhoto(_lightboxIndex);
+}
+
+function closeLightbox() {
+    document.getElementById('lightboxModal').classList.remove('open');
+    document.getElementById('lightbox-img').src = '';
+}
+
+function closeLightboxOutside(e) {
+    if (e.target === document.getElementById('lightboxModal')) closeLightbox();
+}
+
+// Keyboard navigation lightbox
+document.addEventListener('keydown', e => {
+    const modal = document.getElementById('lightboxModal');
+    if (!modal.classList.contains('open')) return;
+    if (e.key === 'ArrowLeft')  lightboxNav(-1);
+    if (e.key === 'ArrowRight') lightboxNav(1);
+});
 
 // ── PAGE NAVIGATION ───────────────────────────────────────────────
 function showPage(name) {
@@ -594,6 +990,7 @@ function showPage(name) {
     document.getElementById('page-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.add('active');
     if (name === 'rekap') initRekap();
+    if (name === 'gallery') initGallery();
 }
 
 function toggleSidebar() {
