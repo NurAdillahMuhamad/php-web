@@ -1240,7 +1240,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveMod
 // ══════════════════════════════════════════════════════════════════
 // REKAPITULASI
 // ══════════════════════════════════════════════════════════════════
-const ROWS_PER_PAGE = 7;
+const ROWS_PER_PAGE = 6;
 let _rekapData  = [];
 let _rekapTotal = 0;
 let _rekapPage  = 1;
