@@ -1,19 +1,14 @@
 <?php
 // ================================================================
 // api_rekap.php — Data rekapitulasi untuk halaman rekap
-// Perubahan:
-// 1. Tambah parameter ?sub=1/2/3 untuk filter sub
-// 2. Tambah kondisi_ph (Rendah/Normal/Tinggi) dihitung di PHP
-// 3. Label waktu pakai MIN(waktu) bukan dibulatkan ke jam bulat
-// 4. Tambah vol_basa dan vol_normal
-// 5. CSV pakai delimiter ; dan sep=; untuk WPS/Excel
-// 6. Tanggal dan jam dipisah jadi 2 kolom di CSV
-// ================================================================
-
+// ★ UPDATED: Timezone WIB conversion
+// ...
 header('Access-Control-Allow-Origin: *');
 
+date_default_timezone_set('Asia/Jakarta');
+
 // ── KONEKSI DATABASE ─────────────────────────────────────────────
-$db_host = getenv('MYSQLHOST')     ?: 'localhost';
+$db_host = getenv('MYSQLHOST')
 $db_user = getenv('MYSQLUSER')     ?: 'root';
 $db_pass = getenv('MYSQLPASSWORD') ?: '';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
@@ -43,7 +38,7 @@ $tgl_akhir = mysqli_real_escape_string($konek, $tgl_akhir);
 
 // ── QUERY DATA PER JAM ───────────────────────────────────────────
 $sql = "SELECT
-            DATE_FORMAT(MIN(waktu), '%Y-%m-%d %H:00:00')       AS waktu_jam,
+            MIN(DATE_ADD(waktu, INTERVAL 7 HOUR))              AS waktu_jam,
             ROUND(AVG(pH), 2)                                  AS pH,
             ROUND(AVG(cahaya))                                 AS cahaya,
             MAX(warna)                                         AS warna,
@@ -54,9 +49,9 @@ $sql = "SELECT
             MAX(vol_basa)                                      AS vol_basa,
             MAX(vol_normal)                                    AS vol_normal
         FROM mikroalga_sensor
-        WHERE DATE(waktu) BETWEEN '$tgl_awal' AND '$tgl_akhir'
+        WHERE DATE(DATE_ADD(waktu, INTERVAL 7 HOUR)) BETWEEN '$tgl_awal' AND '$tgl_akhir'
           AND pH IS NOT NULL
-        GROUP BY DATE_FORMAT(waktu, '%Y-%m-%d %H')
+        GROUP BY DATE_FORMAT(DATE_ADD(waktu, INTERVAL 7 HOUR), '%Y-%m-%d %H')
         ORDER BY waktu_jam ASC";
 
 $result = mysqli_query($konek, $sql);
