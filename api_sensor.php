@@ -9,6 +9,8 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+date_default_timezone_set('Asia/Jakarta');
+
 // ── KONEKSI DATABASE (Railway env variable) ──────────────────────
 $db_host = getenv('MYSQLHOST')     ?: 'localhost';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
@@ -33,7 +35,7 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
 // ── QUERY DATA SENSOR PER TANGGAL ────────────────────────────────
 // Ambil data per 1 jam (GROUP BY jam) untuk efisiensi grafik
 $sql = "SELECT
-            DATE_FORMAT(waktu, '%Y-%m-%d %H:00:00') AS waktu,
+            DATE_FORMAT(DATE_ADD(waktu, INTERVAL 7 HOUR), '%Y-%m-%d %H:00:00') AS waktu,
             ROUND(AVG(pH), 2)     AS pH,
             ROUND(AVG(cahaya))    AS cahaya,
             MAX(warna)            AS warna,
@@ -42,7 +44,10 @@ $sql = "SELECT
             MAX(pompa_nutrisi)    AS pompa_nutrisi,
             MAX(uv)               AS uv
         FROM mikroalga_sensor
-        WHERE DATE(waktu) = '$tanggal'
+        WHERE DATE(DATE_ADD(waktu, INTERVAL 7 HOUR)) = '$tanggal'
+          AND pH IS NOT NULL
+        GROUP BY DATE_FORMAT(DATE_ADD(waktu, INTERVAL 7 HOUR), '%Y-%m-%d %H:00:00')
+        ORDER BY waktu ASC";
           AND pH IS NOT NULL
         GROUP BY DATE_FORMAT(waktu, '%Y-%m-%d %H:00:00')
         ORDER BY waktu ASC";
