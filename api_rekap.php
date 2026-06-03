@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('Asia/Jakarta');
 
 // ── KONEKSI DATABASE ─────────────────────────────────────────────
-$db_host = getenv('MYSQLHOST')
+$db_host = getenv('MYSQLHOST')     ?: 'localhost';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
 $db_pass = getenv('MYSQLPASSWORD') ?: '';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
