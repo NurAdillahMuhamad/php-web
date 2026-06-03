@@ -1296,16 +1296,16 @@ function loadRekap() {
             renderRekap();
 
             // Footer nutrisi terakhir
-            if (res.nutrisi_terakhir) {
-                const d = new Date(res.nutrisi_terakhir);
-                document.getElementById('rekap-nutrisi-tgl').textContent =
-                    d.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-                document.getElementById('rekap-nutrisi-sub').textContent =
-                    d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' WIB';
-            } else {
-                document.getElementById('rekap-nutrisi-tgl').textContent = '—';
-                document.getElementById('rekap-nutrisi-sub').textContent  = 'Belum ada data';
-            }
+            // if (res.nutrisi_terakhir) {
+            //     const d = new Date(res.nutrisi_terakhir);
+            //     document.getElementById('rekap-nutrisi-tgl').textContent =
+            //         d.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+            //     document.getElementById('rekap-nutrisi-sub').textContent =
+            //         d.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) + ' WIB';
+            // } else {
+            //     document.getElementById('rekap-nutrisi-tgl').textContent = '—';
+            //     document.getElementById('rekap-nutrisi-sub').textContent  = 'Belum ada data';
+            // }
         })
         .catch(e => {
             tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--red);">
