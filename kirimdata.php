@@ -11,6 +11,8 @@
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 
+date_default_timezone_set('Asia/Jakarta');
+
 // ── KONEKSI DATABASE (Railway env variable) ──────────────────────
 $db_host = getenv('MYSQLHOST')     ?: 'localhost';
 $db_user = getenv('MYSQLUSER')     ?: 'root';
