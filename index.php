@@ -33,8 +33,8 @@ $username_display = $_SESSION['username'] ?? 'Admin';
     --sidebar-w  : 200px;
 }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; overflow:auto; }
-.shell { display:flex; min-height:100vh; overflow:visible; }
+body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; overflow:hidden; }
+.shell { display:flex; height:100vh; overflow:hidden; }
 
 /* ── SIDEBAR ── */
 .sidebar { width:220px; min-width:54px; height:100vh; background:var(--green-dark); display:flex; flex-direction:column; transition:width .25s,min-width .25s; overflow:hidden; flex-shrink:0; z-index:10; }
@@ -57,7 +57,7 @@ body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:v
 .sidebar.expanded .sb-uname { opacity:1; }
 
 /* ── MAIN AREA ── */
-.main-area { flex:1; min-width:0; overflow-y:visible; display:flex; flex-direction:column; }
+.main-area { flex:1; min-width:0; overflow-y:auto; display:flex; flex-direction:column; }
 .page { display:none; width:100%; min-height:100vh; max-width:1050px; margin:0 auto; padding:14px; flex-direction:column; gap:12px; }
 .page.active { display:flex; }
 
