@@ -33,7 +33,7 @@ $username_display = $_SESSION['username'] ?? 'Admin';
     --sidebar-w  : 200px;
 }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; overflow:hidden; }
+body { font-family:'Plus Jakarta Sans',sans-serif; background:var(--bg); color:var(--text); font-size:14px; line-height:1.5; overflow:auto; }
 .shell { display:flex; height:100vh; overflow:hidden; }
 
 /* ── SIDEBAR ── */
