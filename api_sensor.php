@@ -1,9 +1,7 @@
 <?php
 // ================================================================
 // api_sensor.php — Data historis untuk grafik (REVISED)
-// Perubahan:
-// 1. Koneksi DB pakai environment variable Railway
-// 2. Hapus persentase_warna dari query & response
+// ★ UPDATED: Timezone WIB conversion dengan DATE_ADD
 // ================================================================
 
 header('Content-Type: application/json');
@@ -33,7 +31,7 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $tanggal)) {
 }
 
 // ── QUERY DATA SENSOR PER TANGGAL ────────────────────────────────
-// Ambil data per 1 jam (GROUP BY jam) untuk efisiensi grafik
+// ★ UPDATE: Gunakan DATE_ADD untuk timezone conversion
 $sql = "SELECT
             DATE_FORMAT(DATE_ADD(waktu, INTERVAL 7 HOUR), '%Y-%m-%d %H:00:00') AS waktu,
             ROUND(AVG(pH), 2)     AS pH,
@@ -47,9 +45,6 @@ $sql = "SELECT
         WHERE DATE(DATE_ADD(waktu, INTERVAL 7 HOUR)) = '$tanggal'
           AND pH IS NOT NULL
         GROUP BY DATE_FORMAT(DATE_ADD(waktu, INTERVAL 7 HOUR), '%Y-%m-%d %H:00:00')
-        ORDER BY waktu ASC";
-          AND pH IS NOT NULL
-        GROUP BY DATE_FORMAT(waktu, '%Y-%m-%d %H:00:00')
         ORDER BY waktu ASC";
 
 $result = mysqli_query($konek, $sql);
