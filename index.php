@@ -421,11 +421,11 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                     <div class="section-title"><span>⚡</span> Kontrol Otomatis ★ FULL AUTO</div>
                     <div class="control-item">
                         <div class="control-left"><i class="fas fa-water"></i><span>Pompa Basa</span></div>
-                        <label class="toggle"><input type="checkbox" id="togBasa" disabled><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="togBasa" disabled><span class="toggle-slider green"></span></label>
                     </div>
                     <div class="control-item">
                         <div class="control-left"><i class="fas fa-water"></i><span>Pompa Air Netral</span></div>
-                        <label class="toggle"><input type="checkbox" id="togNormal" disabled><span class="toggle-slider"></span></label>
+                        <label class="toggle"><input type="checkbox" id="togNormal" disabled><span class="toggle-slider green"></span></label>
                     </div>
                     <div class="control-item">
                         <div class="control-left"><i class="fas fa-leaf"></i><span>Pompa Nutrisi</span></div>
@@ -726,30 +726,30 @@ function getFaseClass(warna) {
 function getFaseBg(warna) {
     if (!warna) return '#EEEEEE';
     const w = warna.toLowerCase();
-    if (w.includes('pembibitan') || w.includes('fase 1')) return '#FFF9E6';
-    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#C8E6C9';
-    if (w.includes('optimal')    || w.includes('fase 3')) return '#A5D6A7';
-    if (w.includes('panen')      || w.includes('fase 4')) return '#BBDEFB';
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#83ff5a';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#2dc922';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#12700b';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#093c04';
     return '#EEEEEE';
 }
 
 function getFaseColor(warna) {
     if (!warna) return '#616161';
     const w = warna.toLowerCase();
-    if (w.includes('pembibitan') || w.includes('fase 1')) return '#8B6914';
-    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#1B5E20';
-    if (w.includes('optimal')    || w.includes('fase 3')) return '#1B5E20';
-    if (w.includes('panen')      || w.includes('fase 4')) return '#0D47A1';
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#1a4a00';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#1a4a00';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#83ff5a';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#83ff5a';
     return '#616161';
 }
 
 function getFaseDotColor(warna) {
     if (!warna) return '#BDBDBD';
     const w = warna.toLowerCase();
-    if (w.includes('pembibitan') || w.includes('fase 1')) return '#F9C74F';
-    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#66BB6A';
-    if (w.includes('optimal')    || w.includes('fase 3')) return '#43A047';
-    if (w.includes('panen')      || w.includes('fase 4')) return '#1E88E5';
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#83ff5a';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#2dc922';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#12700b';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#093c04';
     return '#BDBDBD';
 }
 
@@ -1057,10 +1057,10 @@ function loadCharts(tanggal) {
 function faseToBg(warna) {
     if (!warna) return '#b0bec5';
     const w = warna.toLowerCase();
-    if (w.includes('pembibitan') || w.includes('fase 1')) return '#f9c74f';
-    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#4caf50';
-    if (w.includes('optimal')    || w.includes('fase 3')) return '#0d6b53';
-    if (w.includes('panen')      || w.includes('fase 4')) return '#1a237e';
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#83ff5a';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#2dc922';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#12700b';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#093c04';
     return '#b0bec5';
 }
 function faseToClass(warna) {
@@ -1075,10 +1075,10 @@ function faseToClass(warna) {
 function faseToBboxColor(warna) {
     if (!warna) return '#78909c';
     const w = warna.toLowerCase();
-    if (w.includes('pembibitan') || w.includes('fase 1')) return '#f9c74f';
-    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#4caf50';
-    if (w.includes('optimal')    || w.includes('fase 3')) return '#2dc4a2';
-    if (w.includes('panen')      || w.includes('fase 4')) return '#7986cb';
+    if (w.includes('pembibitan') || w.includes('fase 1')) return '#83ff5a';
+    if (w.includes('pertumbuhan')|| w.includes('fase 2')) return '#2dc922';
+    if (w.includes('optimal')    || w.includes('fase 3')) return '#12700b';
+    if (w.includes('panen')      || w.includes('fase 4')) return '#093c04';
     return '#78909c';
 }
 
