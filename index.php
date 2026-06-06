@@ -1470,7 +1470,6 @@ function downloadCSV() {
 // ══════════════════════════════════════════════════════════════════
 // GALLERY
 // ══════════════════════════════════════════════════════════════════
-let _galleryPage = 1;
 
 function initGallery() {
     const today = new Date().toISOString().split('T')[0];
