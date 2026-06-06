@@ -1402,6 +1402,195 @@ function downloadCSV() {
     if (!dari || !sampai) return alert('Pilih rentang tanggal terlebih dahulu');
     window.location.href = `api_rekap.php?dari=${dari}&sampai=${sampai}&sub=${_currentSub}&export=csv`;
 }
+// ══════════════════════════════════════════════════════════════════
+// GALLERY
+// ══════════════════════════════════════════════════════════════════
+let _galleryPage = 1;
+
+function initGallery() {
+    const today = new Date().toISOString().split('T')[0];
+    if (!document.getElementById('gallery-dari').value) {
+        document.getElementById('gallery-dari').value   = today;
+        document.getElementById('gallery-sampai').value = today;
+    }
+    loadGallery(1);
+}
+
+function loadGallery(page) {
+    _galleryPage    = page || 1;
+    const dari      = document.getElementById('gallery-dari').value;
+    const sampai    = document.getElementById('gallery-sampai').value;
+    if (!dari || !sampai) return;
+
+    const grid = document.getElementById('gallery-grid');
+    grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:48px 24px;
+                    color:var(--text-soft);background:var(--white);">
+            <i class="fas fa-spinner fa-spin"></i> Memuat foto...
+        </div>`;
+
+    const url = `api_gallery.php?dari=${dari}&sampai=${sampai}&page=${_galleryPage}&per_page=12&kolam=1&t=${Date.now()}`;
+
+    fetch(url)
+        .then(r => r.json())
+        .then(res => {
+            if (res.error) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:48px 24px;
+                                color:var(--red);background:var(--white);">
+                        ${res.error}
+                    </div>`;
+                return;
+            }
+
+            // ── Stats ─────────────────────────────────────────────
+            document.getElementById('gallery-total-foto').textContent =
+                res.total > 0 ? res.total.toLocaleString('id-ID') : '0';
+            document.getElementById('gallery-fase-terbaru').textContent =
+                res.fase_terbaru || 'tidak terdeteksi';
+            document.getElementById('gallery-page-info').textContent =
+                res.total_pages > 0
+                    ? `${_galleryPage} / ${res.total_pages}`
+                    : '0 / 0';
+            document.getElementById('gallery-info').textContent =
+                res.total > 0
+                    ? `Menampilkan ${((_galleryPage-1)*12)+1}–${Math.min(_galleryPage*12, res.total)} dari ${res.total} foto`
+                    : 'Tidak ada foto';
+            document.getElementById('gallery-last-refresh').textContent =
+                'Diperbarui: ' + new Date().toLocaleTimeString('id-ID');
+
+            // ── Grid foto ─────────────────────────────────────────
+            if (!res.fotos || res.fotos.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column:1/-1;text-align:center;padding:48px 24px;
+                                color:var(--text-soft);background:var(--white);">
+                        Tidak ada foto untuk rentang tanggal ini
+                    </div>`;
+                document.getElementById('gallery-pages').innerHTML = '';
+                return;
+            }
+
+            grid.innerHTML = res.fotos.map(f => {
+                const faseClass  = getFaseClass(f.warna);
+                const faseColor  = getFaseColor(f.warna);
+                const waktuStr   = f.waktu
+                    ? new Date(f.waktu).toLocaleTimeString('id-ID',
+                        {hour:'2-digit', minute:'2-digit', second:'2-digit'})
+                    : '—';
+                const tanggalStr = f.waktu
+                    ? new Date(f.waktu).toLocaleDateString('id-ID',
+                        {day:'numeric', month:'short'})
+                    : '—';
+                const imgSrc = f.thumb_url || '';
+
+                return `
+                <div style="background:var(--white);cursor:pointer;overflow:hidden;
+                            transition:transform .15s;position:relative;"
+                     onclick="bukaFoto('${f.view_url || ''}', '${f.file_name || ''}', '${f.warna || ''}', '${f.status_warna || ''}', '${f.waktu || ''}', ${f.skor})"
+                     onmouseover="this.style.transform='scale(1.02)'"
+                     onmouseout="this.style.transform='scale(1)'">
+                    <div style="position:relative;aspect-ratio:4/3;background:#1a2b25;overflow:hidden;">
+                        <img src="${imgSrc}" alt="${f.file_name}"
+                             style="width:100%;height:100%;object-fit:cover;display:block;"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div style="display:none;width:100%;height:100%;align-items:center;
+                                    justify-content:center;color:rgba(255,255,255,.3);
+                                    font-size:.7rem;font-weight:600;flex-direction:column;gap:6px;
+                                    position:absolute;inset:0;">
+                            <i class="fas fa-image" style="font-size:1.5rem;"></i>
+                            <span>Tidak tersedia</span>
+                        </div>
+                        <div style="position:absolute;bottom:0;left:0;right:0;
+                                    background:linear-gradient(transparent,rgba(0,0,0,.7));
+                                    padding:8px 8px 6px;">
+                            <div style="color:#fff;font-size:.62rem;font-weight:700;">${tanggalStr} · ${waktuStr}</div>
+                        </div>
+                        <div style="position:absolute;top:6px;right:6px;
+                                    background:${faseColor};color:#fff;
+                                    font-size:.55rem;font-weight:800;
+                                    padding:2px 7px;border-radius:10px;">
+                            ${f.warna !== 'tidak terdeteksi' ? f.warna.replace('Fase ','F') : '—'}
+                        </div>
+                    </div>
+                    <div style="padding:7px 8px;">
+                        <div style="font-size:.65rem;font-weight:700;color:var(--text);
+                                    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            ${f.file_name || '—'}
+                        </div>
+                        <div style="font-size:.6rem;color:var(--text-soft);margin-top:2px;">
+                            Skor: <strong>${f.skor}</strong>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+
+            // ── Pagination ────────────────────────────────────────
+            renderGalleryPages(res.total_pages);
+        })
+        .catch(e => {
+            grid.innerHTML = `
+                <div style="grid-column:1/-1;text-align:center;padding:48px 24px;
+                            color:var(--red);background:var(--white);">
+                    Gagal memuat data
+                </div>`;
+            console.error('Gallery error:', e);
+        });
+}
+
+function renderGalleryPages(totalPages) {
+    const el = document.getElementById('gallery-pages');
+    if (totalPages <= 1) { el.innerHTML = ''; return; }
+
+    // Tampilkan max 7 tombol (prev, 1..5, next)
+    let btns = '';
+    const curr = _galleryPage;
+
+    if (curr > 1) btns += `<button class="page-btn" onclick="loadGallery(${curr-1})">‹</button>`;
+
+    let start = Math.max(1, curr - 2);
+    let end   = Math.min(totalPages, start + 4);
+    if (end - start < 4) start = Math.max(1, end - 4);
+
+    if (start > 1) btns += `<button class="page-btn" onclick="loadGallery(1)">1</button>`;
+    if (start > 2) btns += `<span style="padding:4px 6px;color:var(--text-soft);">…</span>`;
+
+    for (let i = start; i <= end; i++) {
+        btns += `<button class="page-btn ${i === curr ? 'active' : ''}"
+                         onclick="loadGallery(${i})">${i}</button>`;
+    }
+
+    if (end < totalPages - 1) btns += `<span style="padding:4px 6px;color:var(--text-soft);">…</span>`;
+    if (end < totalPages)     btns += `<button class="page-btn" onclick="loadGallery(${totalPages})">${totalPages}</button>`;
+    if (curr < totalPages)    btns += `<button class="page-btn" onclick="loadGallery(${curr+1})">›</button>`;
+
+    el.innerHTML = btns;
+}
+
+function bukaFoto(viewUrl, fileName, warna, statusWarna, waktu, skor) {
+    if (!viewUrl) return;
+    window.open(viewUrl, '_blank');
+}
+
+function getFaseClass(warna) {
+    if (!warna) return 'none';
+    const w = warna.toLowerCase();
+    if (w.includes('fase 1') || w.includes('pembibitan'))  return 'fase1';
+    if (w.includes('fase 2') || w.includes('pertumbuhan')) return 'fase2';
+    if (w.includes('fase 3') || w.includes('optimal'))     return 'fase3';
+    if (w.includes('fase 4') || w.includes('panen'))       return 'fase4';
+    return 'none';
+}
+
+function getFaseColor(warna) {
+    if (!warna) return '#78909c';
+    const w = warna.toLowerCase();
+    if (w.includes('fase 1') || w.includes('pembibitan'))  return '#f9a825';
+    if (w.includes('fase 2') || w.includes('pertumbuhan')) return '#388e3c';
+    if (w.includes('fase 3') || w.includes('optimal'))     return '#0a5c47';
+    if (w.includes('fase 4') || w.includes('panen'))       return '#1a237e';
+    return '#78909c';
+}
+
 </script>
 </body>
 </html>
