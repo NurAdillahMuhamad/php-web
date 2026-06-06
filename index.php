@@ -598,7 +598,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                 <span style="font-size:.68rem;color:var(--text-soft);font-weight:600;" id="gallery-last-refresh">—</span>
             </div>
 
-            <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);">
+            <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--border);">
                 <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--text-soft);background:var(--white);">
                     Pilih rentang tanggal lalu klik Tampilkan
                 </div>
@@ -786,7 +786,7 @@ function loadGallery(page) {
             <i class="fas fa-spinner fa-spin"></i> Memuat foto...
         </div>`;
 
-    const url = `api_gallery.php?dari=${dari}&sampai=${sampai}&page=${_galleryPage}&per_page=12&kolam=1&t=${Date.now()}`;
+    const url = `api_gallery.php?dari=${dari}&sampai=${sampai}&page=${_galleryPage}&per_page=4&kolam=1&t=${Date.now()}`;
 
     fetch(url)
         .then(r => r.json())
@@ -804,7 +804,7 @@ function loadGallery(page) {
                 res.total_pages > 0 ? `${_galleryPage} / ${res.total_pages}` : '0 / 0';
             document.getElementById('gallery-info').textContent =
                 res.total > 0
-                    ? `Menampilkan ${((_galleryPage-1)*12)+1}–${Math.min(_galleryPage*12, res.total)} dari ${res.total} foto`
+                    ? `Menampilkan ${((_galleryPage-1)*4)+1}–${Math.min(_galleryPage*4, res.total)} dari ${res.total} foto`
                     : 'Tidak ada foto';
             document.getElementById('gallery-last-refresh').textContent =
                 'Diperbarui: ' + new Date().toLocaleTimeString('id-ID');
@@ -1493,7 +1493,7 @@ function loadGallery(page) {
             <i class="fas fa-spinner fa-spin"></i> Memuat foto...
         </div>`;
 
-    const url = `api_gallery.php?dari=${dari}&sampai=${sampai}&page=${_galleryPage}&per_page=12&kolam=1&t=${Date.now()}`;
+    const url = `api_gallery.php?dari=${dari}&sampai=${sampai}&page=${_galleryPage}&per_page=4&kolam=1&t=${Date.now()}`;
 
     fetch(url)
         .then(r => r.json())
@@ -1518,7 +1518,7 @@ function loadGallery(page) {
                     : '0 / 0';
             document.getElementById('gallery-info').textContent =
                 res.total > 0
-                    ? `Menampilkan ${((_galleryPage-1)*12)+1}–${Math.min(_galleryPage*12, res.total)} dari ${res.total} foto`
+                    ? `Menampilkan ${((_galleryPage-1)*4)+1}–${Math.min(_galleryPage*4, res.total)} dari ${res.total} foto`
                     : 'Tidak ada foto';
             document.getElementById('gallery-last-refresh').textContent =
                 'Diperbarui: ' + new Date().toLocaleTimeString('id-ID');
