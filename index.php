@@ -346,10 +346,10 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                 <h2>Welcome Back, <?= htmlspecialchars($username_display) ?></h2>
                 <p>Monitoring Dan Kontrol Kolam Mikroalga Spirulina Sp.</p>
             </div>
-            <button class="btn-live-header" onclick="openLiveModal()">
+            <!-- <button class="btn-live-header" onclick="openLiveModal()">
                 <span class="live-dot-h"></span>
                 <i class="fas fa-video"></i> LIVE STREAM
-            </button>
+            </button> -->
         </div>
 
         <div class="main-content">
@@ -662,7 +662,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
 </div><!-- /shell -->
 
 <!-- ══ MODAL LIVE STREAM ══ -->
-<div class="modal-overlay" id="liveModal" onclick="closeLiveModalOutside(event)">
+<!-- <div class="modal-overlay" id="liveModal" onclick="closeLiveModalOutside(event)">
     <div class="modal-box">
         <div class="modal-header">
             <div class="modal-header-left">
@@ -695,7 +695,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
             <span class="menit-info" id="modal-menit">— menit lalu</span>
         </div>
     </div>
-</div>
+</div> -->
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
