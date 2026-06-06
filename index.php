@@ -598,7 +598,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                 <span style="font-size:.68rem;color:var(--text-soft);font-weight:600;" id="gallery-last-refresh">—</span>
             </div>
 
-            <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--border);">
+            <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:var(--white);padding:12px;">
                 <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:var(--text-soft);background:var(--white);">
                     Pilih rentang tanggal lalu klik Tampilkan
                 </div>
