@@ -1240,7 +1240,8 @@ function loadLatest() {
             }
             _prevState = s;
         })
-        .catch(() => {
+        .catch((err) => {
+            console.error('[FETCH ERROR]', err);
             if (Object.keys(_prevState).length === 0) {
                 document.getElementById('last-update').textContent = 'KOLAM 1 · Offline';
             }
