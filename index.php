@@ -1149,6 +1149,7 @@ function faseToBboxColor(warna) {
 
 // ── STATE GLOBAL ──────────────────────────────────────────────────
 let _warnaData = { warna:'tidak terdeteksi', status_warna:'-', warna_menit_lalu:null, bbox:null };
+let _logItems  = [];
 
 // ── LOAD REAL-TIME ────────────────────────────────────────────────
 function addLog(color, msg) {
@@ -1201,7 +1202,7 @@ function loadLatest() {
             document.getElementById('warna-box').style.background = faseToBg(warna);
             document.getElementById('badge-warna').textContent    = warna !== 'tidak terdeteksi' ? warna : 'Belum terdeteksi';
             renderBboxOverlay();
-            updateModalOverlay();
+            // updateModalOverlay();
 
             // Last update
             const mnt = s.menit_lalu;
@@ -1264,6 +1265,7 @@ if (bboxToggleEl) {
 }
 function renderBboxOverlay() {
     const overlay = document.getElementById('bbox-overlay');
+    if (!overlay) return;
     overlay.innerHTML = '';
     const { bbox, warna } = _warnaData;
     if (!_bboxVisible || !bbox || !warna || warna === 'tidak terdeteksi') return;
@@ -1310,7 +1312,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveMod
 // ══════════════════════════════════════════════════════════════════
 // REKAPITULASI
 // ══════════════════════════════════════════════════════════════════
-let _logItems  = [];
     
 const ROWS_PER_PAGE = 6;
 let _rekapData  = [];
@@ -1641,16 +1642,6 @@ function getFaseClass(warna) {
     if (w.includes('fase 3') || w.includes('optimal'))     return 'fase3';
     if (w.includes('fase 4') || w.includes('panen'))       return 'fase4';
     return 'none';
-}
-
-function getFaseColor(warna) {
-    if (!warna) return '#78909c';
-    const w = warna.toLowerCase();
-    if (w.includes('fase 1') || w.includes('pembibitan'))  return '#f9a825';
-    if (w.includes('fase 2') || w.includes('pertumbuhan')) return '#388e3c';
-    if (w.includes('fase 3') || w.includes('optimal'))     return '#0a5c47';
-    if (w.includes('fase 4') || w.includes('panen'))       return '#1a237e';
-    return '#78909c';
 }
 
 </script>
