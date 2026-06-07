@@ -1254,9 +1254,12 @@ setInterval(() => loadCharts(document.getElementById('datePicker').value), 60000
 
 // ── BOUNDING BOX ──────────────────────────────────────────────────
 let _bboxVisible = true;
-document.getElementById('bbox-toggle').addEventListener('change', function() {
-    _bboxVisible = this.checked; renderBboxOverlay();
-});
+const bboxToggleEl = document.getElementById('bbox-toggle');
+if (bboxToggleEl) {
+    bboxToggleEl.addEventListener('change', function() {
+        _bboxVisible = this.checked; renderBboxOverlay();
+    });
+}
 function renderBboxOverlay() {
     const overlay = document.getElementById('bbox-overlay');
     overlay.innerHTML = '';
@@ -1305,6 +1308,8 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLiveMod
 // ══════════════════════════════════════════════════════════════════
 // REKAPITULASI
 // ══════════════════════════════════════════════════════════════════
+let _logItems  = [];
+    
 const ROWS_PER_PAGE = 6;
 let _rekapData  = [];
 let _rekapTotal = 0;
@@ -1470,15 +1475,6 @@ function downloadCSV() {
 // ══════════════════════════════════════════════════════════════════
 // GALLERY
 // ══════════════════════════════════════════════════════════════════
-
-function initGallery() {
-    const today = new Date().toISOString().split('T')[0];
-    if (!document.getElementById('gallery-dari').value) {
-        document.getElementById('gallery-dari').value   = today;
-        document.getElementById('gallery-sampai').value = today;
-    }
-    loadGallery(1);
-}
 
 function loadGallery(page) {
     _galleryPage    = page || 1;
