@@ -1149,7 +1149,6 @@ function faseToBboxColor(warna) {
 
 // ── STATE GLOBAL ──────────────────────────────────────────────────
 let _warnaData = { warna:'tidak terdeteksi', status_warna:'-', warna_menit_lalu:null, bbox:null };
-let _logItems  = [];
 
 // ── LOAD REAL-TIME ────────────────────────────────────────────────
 function addLog(color, msg) {
