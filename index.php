@@ -1168,7 +1168,7 @@ function addLog(color, msg) {
 
 let _prevState = {};
 function loadLatest() {
-    fetch('cek_sensor.php?t=' + Date.now())
+    fetch('cek_sensor.php?t=' + Date.now(), { signal: AbortSignal.timeout(8000) })
         .then(r => r.json())
         .then(s => {
             // pH
@@ -1241,7 +1241,9 @@ function loadLatest() {
             _prevState = s;
         })
         .catch(() => {
-            document.getElementById('last-update').textContent = 'KOLAM 1 · Offline';
+            if (Object.keys(_prevState).length === 0) {
+                document.getElementById('last-update').textContent = 'KOLAM 1 · Offline';
+            }
         });
 }
 
