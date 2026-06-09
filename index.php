@@ -700,7 +700,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────
-const STREAM_URL  = 'http://192.168.0.150:81/stream';
+const STREAM_URL = 'http://10.236.153.150:81/stream';
 const RAILWAY_URL = 'https://worker-production-c170.up.railway.app/hasil_warna';
 const GALLERY_PER_PAGE   = 12;
 const GALLERY_REFRESH_MS = 60000;
