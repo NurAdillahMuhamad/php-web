@@ -420,11 +420,11 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                 <div class="control-box">
                     <div class="section-title"><span>⚡</span> Kontrol Otomatis ★ FULL AUTO</div>
                     <div class="control-item">
-                        <div class="control-left"><i class="fas fa-water"></i><span>Pompa Basa</span></div>
+                        <div class="control-left"><i class="fas fa-water"></i><span>Pompa Up</span></div>
                         <label class="toggle"><input type="checkbox" id="togBasa" disabled><span class="toggle-slider green"></span></label>
                     </div>
                     <div class="control-item">
-                    <div class="control-left"><i class="fas fa-water"></i><span>Pompa Asam</span></div>
+                    <div class="control-left"><i class="fas fa-water"></i><span>Pompa Air Down</span></div>
                     <label class="toggle"><input type="checkbox" id="togNormal" disabled><span class="toggle-slider"></span></label>
                     </div>
                     <div class="control-item">
@@ -505,8 +505,8 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                             <th>Tanggal</th>
                             <th>pH</th>
                             <th>Kondisi pH</th>
-                            <th>Pompa Basa</th>
-                            <th>Pompa Asam</th>
+                            <th>Pompa Up</th>
+                            <th>Pompa Down</th>
                             <th>Vol Basa</th>
                             <th>Vol Normal</th>
                         </tr>
