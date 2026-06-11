@@ -424,7 +424,7 @@ table.rekap-table tbody td { padding:10px 14px; font-weight:600; vertical-align:
                         <label class="toggle"><input type="checkbox" id="togBasa" disabled><span class="toggle-slider green"></span></label>
                     </div>
                     <div class="control-item">
-                    <div class="control-left"><i class="fas fa-water"></i><span>Pompa Air Down</span></div>
+                    <div class="control-left"><i class="fas fa-water"></i><span>Pompa Down</span></div>
                     <label class="toggle"><input type="checkbox" id="togNormal" disabled><span class="toggle-slider"></span></label>
                     </div>
                     <div class="control-item">
